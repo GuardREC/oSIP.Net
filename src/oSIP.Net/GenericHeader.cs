@@ -21,7 +21,7 @@ namespace oSIP.Net
         private static osip_header_t* Create()
         {
             osip_header_t* native;
-            NativeMethods.osip_header_init(&native);
+            NativeMethods.osip_header_init(&native).ThrowOnError();
             return native;
         }
 
@@ -54,14 +54,14 @@ namespace oSIP.Net
         public GenericHeader DeepClone()
         {
             osip_header_t* native;
-            NativeMethods.osip_header_clone(_native, &native);
+            NativeMethods.osip_header_clone(_native, &native).ThrowOnError();
             return new GenericHeader(native, true);
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_header_to_str(_native, &ptr);
+            NativeMethods.osip_header_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

@@ -23,7 +23,7 @@ namespace oSIP.Net
         private static osip_via_t* Create()
         {
             osip_via_t* native;
-            NativeMethods.osip_via_init(&native);
+            NativeMethods.osip_via_init(&native).ThrowOnError();
             return native;
         }
 
@@ -84,7 +84,7 @@ namespace oSIP.Net
             var header = new ViaHeader();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_via_parse(header._native, strPtr);
+            NativeMethods.osip_via_parse(header._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return header;
@@ -99,14 +99,14 @@ namespace oSIP.Net
         public ViaHeader DeepClone()
         {
             osip_via_t* via;
-            NativeMethods.osip_via_clone(_native, &via);
+            NativeMethods.osip_via_clone(_native, &via).ThrowOnError();
             return new ViaHeader(via, true);
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_via_to_str(_native, &ptr);
+            NativeMethods.osip_via_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

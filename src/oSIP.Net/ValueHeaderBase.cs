@@ -19,7 +19,7 @@ namespace oSIP.Net
         private static osip_content_length_t* Create()
         {
             osip_content_length_t* contentLength;
-            NativeMethods.osip_content_length_init(&contentLength);
+            NativeMethods.osip_content_length_init(&contentLength).ThrowOnError();
             return contentLength;
         }
 
@@ -38,7 +38,7 @@ namespace oSIP.Net
             var header = new T();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_content_length_parse(header._native, strPtr);
+            NativeMethods.osip_content_length_parse(header._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return header;
@@ -53,7 +53,7 @@ namespace oSIP.Net
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_content_length_to_str(_native, &ptr);
+            NativeMethods.osip_content_length_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

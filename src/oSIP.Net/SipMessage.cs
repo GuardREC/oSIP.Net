@@ -245,7 +245,7 @@ namespace oSIP.Net
             osip_message_t* message = Create();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_message_parse(message, strPtr, (ulong) str.Length);
+            NativeMethods.osip_message_parse(message, strPtr, (ulong) str.Length).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return message->status_code == 0
@@ -256,7 +256,7 @@ namespace oSIP.Net
         private static osip_message_t* Create()
         {
             osip_message_t* message;
-            NativeMethods.osip_message_init(&message);
+            NativeMethods.osip_message_init(&message).ThrowOnError();
             return message;
         }
 
@@ -264,7 +264,7 @@ namespace oSIP.Net
         {
             IntPtr ptr;
             int length;
-            NativeMethods.osip_message_to_str(Native, &ptr, &length);
+            NativeMethods.osip_message_to_str(Native, &ptr, &length).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

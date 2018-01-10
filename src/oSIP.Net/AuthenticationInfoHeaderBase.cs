@@ -19,7 +19,7 @@ namespace oSIP.Net
         private static osip_authentication_info_t* Create()
         {
             osip_authentication_info_t* info;
-            NativeMethods.osip_authentication_info_init(&info);
+            NativeMethods.osip_authentication_info_init(&info).ThrowOnError();
             return info;
         }
 
@@ -138,7 +138,7 @@ namespace oSIP.Net
             var from = new T();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_authentication_info_parse(from._native, strPtr);
+            NativeMethods.osip_authentication_info_parse(from._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return from;
@@ -150,17 +150,17 @@ namespace oSIP.Net
             return _native;
         }
 
-        protected T DeepClone<T>(Func<IntPtr, T> foo) where T : AuthenticationInfoHeaderBase
+        protected T DeepClone<T>(Func<IntPtr, T> func) where T : AuthenticationInfoHeaderBase
         {
             osip_authentication_info_t* native;
-            NativeMethods.osip_authentication_info_clone(_native, &native);
-            return foo(new IntPtr(native));
+            NativeMethods.osip_authentication_info_clone(_native, &native).ThrowOnError();
+            return func(new IntPtr(native));
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_authentication_info_to_str(_native, &ptr);
+            NativeMethods.osip_authentication_info_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

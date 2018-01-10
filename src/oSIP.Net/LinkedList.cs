@@ -20,7 +20,7 @@ namespace oSIP.Net
             _toNative = toNative;
             _fromNative = fromNative;
 
-            NativeMethods.osip_list_init(_native);
+            NativeMethods.osip_list_init(_native).ThrowOnError();
         }
 
         internal LinkedList(osip_list_t* native, Func<T, IntPtr> toNative, Func<IntPtr, T> fromNative)
@@ -30,7 +30,15 @@ namespace oSIP.Net
             _fromNative = fromNative;
         }
 
-        public int Size => NativeMethods.osip_list_size(_native);
+        public int Size
+        {
+            get
+            {
+                int size = NativeMethods.osip_list_size(_native);
+                ((ErrorCode) size).ThrowOnError();
+                return size;
+            }
+        }
 
         public void Add(T item)
         {
@@ -45,7 +53,7 @@ namespace oSIP.Net
             }
 
             void* itemPtr = _toNative(item).ToPointer();
-            NativeMethods.osip_list_add(_native, itemPtr, index);
+            NativeMethods.osip_list_add(_native, itemPtr, index).ThrowOnError();
         }
 
         public void RemoveAt(int index)
@@ -55,7 +63,7 @@ namespace oSIP.Net
                 throw new IndexOutOfRangeException();
             }
 
-            NativeMethods.osip_list_remove(_native, index);
+            NativeMethods.osip_list_remove(_native, index).ThrowOnError();
         }
 
         public T this[int index]

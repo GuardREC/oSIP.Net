@@ -19,7 +19,7 @@ namespace oSIP.Net
         private static osip_body_t* Create()
         {
             osip_body_t* native;
-            NativeMethods.osip_body_init(&native);
+            NativeMethods.osip_body_init(&native).ThrowOnError();
             return native;
         }
 
@@ -53,7 +53,7 @@ namespace oSIP.Net
             var body = new SipBody();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_body_parse(body._native, strPtr, (ulong) str.Length);
+            NativeMethods.osip_body_parse(body._native, strPtr, (ulong) str.Length).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return body;
@@ -64,7 +64,7 @@ namespace oSIP.Net
             var body = new SipBody();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_body_parse_mime(body._native, strPtr, (ulong) str.Length);
+            NativeMethods.osip_body_parse_mime(body._native, strPtr, (ulong) str.Length).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return body;
@@ -79,7 +79,7 @@ namespace oSIP.Net
         public SipBody DeepClone()
         {
             osip_body_t* native;
-            NativeMethods.osip_body_clone(_native, &native);
+            NativeMethods.osip_body_clone(_native, &native).ThrowOnError();
             return new SipBody(native, true);
         }
 
@@ -87,7 +87,7 @@ namespace oSIP.Net
         {
             IntPtr ptr;
             ulong length;
-            NativeMethods.osip_body_to_str(_native, &ptr, &length);
+            NativeMethods.osip_body_to_str(_native, &ptr, &length).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr, (int) length);
             NativeMethods.osip_free(ptr.ToPointer());

@@ -23,7 +23,7 @@ namespace oSIP.Net
         private static osip_content_type_t* Create()
         {
             osip_content_type_t* contentType;
-            NativeMethods.osip_content_type_init(&contentType);
+            NativeMethods.osip_content_type_init(&contentType).ThrowOnError();
             return contentType;
         }
 
@@ -54,7 +54,7 @@ namespace oSIP.Net
             var header = new T();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_content_type_parse(header._native, strPtr);
+            NativeMethods.osip_content_type_parse(header._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return header;
@@ -66,17 +66,17 @@ namespace oSIP.Net
             return _native;
         }
 
-        protected T DeepClone<T>(Func<IntPtr, T> foo) where T : MediaHeaderBase
+        protected T DeepClone<T>(Func<IntPtr, T> func) where T : MediaHeaderBase
         {
             osip_content_type_t* native;
-            NativeMethods.osip_content_type_clone(_native, &native);
-            return foo(new IntPtr(native));
+            NativeMethods.osip_content_type_clone(_native, &native).ThrowOnError();
+            return func(new IntPtr(native));
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_content_type_to_str(_native, &ptr);
+            NativeMethods.osip_content_type_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

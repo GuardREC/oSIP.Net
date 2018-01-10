@@ -20,7 +20,7 @@ namespace oSIP.Net
         private static osip_uri_param_t* Create()
         {
             osip_uri_param_t* param;
-            NativeMethods.osip_uri_param_init(&param);
+            NativeMethods.osip_uri_param_init(&param).ThrowOnError();
             return param;
         }
 

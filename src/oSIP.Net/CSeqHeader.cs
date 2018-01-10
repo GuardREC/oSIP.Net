@@ -19,7 +19,7 @@ namespace oSIP.Net
         private static osip_cseq_t* Create()
         {
             osip_cseq_t* native;
-            NativeMethods.osip_cseq_init(&native);
+            NativeMethods.osip_cseq_init(&native).ThrowOnError();
             return native;
         }
 
@@ -48,7 +48,7 @@ namespace oSIP.Net
             var cseq = new CSeqHeader();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_cseq_parse(cseq._native, strPtr);
+            NativeMethods.osip_cseq_parse(cseq._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return cseq;
@@ -63,14 +63,14 @@ namespace oSIP.Net
         public CSeqHeader DeepClone()
         {
             osip_cseq_t* cseq;
-            NativeMethods.osip_cseq_clone(_native, &cseq);
+            NativeMethods.osip_cseq_clone(_native, &cseq).ThrowOnError();
             return new CSeqHeader(cseq, true);
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_cseq_to_str(_native, &ptr);
+            NativeMethods.osip_cseq_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

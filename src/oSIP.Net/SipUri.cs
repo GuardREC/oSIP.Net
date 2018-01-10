@@ -21,7 +21,7 @@ namespace oSIP.Net
         private static osip_uri_t* Create()
         {
             osip_uri_t* uri;
-            NativeMethods.osip_uri_init(&uri);
+            NativeMethods.osip_uri_init(&uri).ThrowOnError();
             return uri;
         }
 
@@ -92,7 +92,7 @@ namespace oSIP.Net
             var uri = new SipUri();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_uri_parse(uri._native, strPtr);
+            NativeMethods.osip_uri_parse(uri._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return uri;
@@ -107,14 +107,14 @@ namespace oSIP.Net
         public SipUri DeepClone()
         {
             osip_uri_t* uri;
-            NativeMethods.osip_uri_clone(_native, &uri);
+            NativeMethods.osip_uri_clone(_native, &uri).ThrowOnError();
             return new SipUri(uri, true);
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_uri_to_str(_native, &ptr);
+            NativeMethods.osip_uri_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

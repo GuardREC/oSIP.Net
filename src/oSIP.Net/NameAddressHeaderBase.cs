@@ -23,7 +23,7 @@ namespace oSIP.Net
         private static osip_from_t* Create()
         {
             osip_from_t* from;
-            NativeMethods.osip_from_init(&from);
+            NativeMethods.osip_from_init(&from).ThrowOnError();
             return from;
         }
 
@@ -61,7 +61,7 @@ namespace oSIP.Net
             var from = new T();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_from_parse(from._native, strPtr);
+            NativeMethods.osip_from_parse(from._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return from;
@@ -73,17 +73,17 @@ namespace oSIP.Net
             return _native;
         }
 
-        protected T DeepClone<T>(Func<IntPtr, T> foo) where T : NameAddressHeaderBase
+        protected T DeepClone<T>(Func<IntPtr, T> func) where T : NameAddressHeaderBase
         {
             osip_from_t* native;
-            NativeMethods.osip_from_clone(_native, &native);
-            return foo(new IntPtr(native));
+            NativeMethods.osip_from_clone(_native, &native).ThrowOnError();
+            return func(new IntPtr(native));
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_from_to_str(_native, &ptr);
+            NativeMethods.osip_from_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

@@ -23,7 +23,7 @@ namespace oSIP.Net
         private static osip_accept_encoding_t* Create()
         {
             osip_accept_encoding_t* encoding;
-            NativeMethods.osip_accept_encoding_init(&encoding);
+            NativeMethods.osip_accept_encoding_init(&encoding).ThrowOnError();
             return encoding;
         }
 
@@ -44,7 +44,7 @@ namespace oSIP.Net
             var header = new T();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_accept_encoding_parse(header._native, strPtr);
+            NativeMethods.osip_accept_encoding_parse(header._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return header;
@@ -56,17 +56,17 @@ namespace oSIP.Net
             return _native;
         }
 
-        protected T DeepClone<T>(Func<IntPtr, T> foo) where T : AcceptHeaderBase
+        protected T DeepClone<T>(Func<IntPtr, T> func) where T : AcceptHeaderBase
         {
             osip_accept_encoding_t* encoding;
-            NativeMethods.osip_accept_encoding_clone(_native, &encoding);
-            return foo(new IntPtr(encoding));
+            NativeMethods.osip_accept_encoding_clone(_native, &encoding).ThrowOnError();
+            return func(new IntPtr(encoding));
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_accept_encoding_to_str(_native, &ptr);
+            NativeMethods.osip_accept_encoding_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());

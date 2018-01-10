@@ -13,7 +13,7 @@ namespace oSIP.Net
                 return;
             }
 
-            NativeMethods.parser_init();
+            NativeMethods.parser_init().ThrowOnError();
         }
     }
 }

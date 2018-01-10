@@ -19,7 +19,7 @@ namespace oSIP.Net
         private static osip_call_id_t* Create()
         {
             osip_call_id_t* callId;
-            NativeMethods.osip_call_id_init(&callId);
+            NativeMethods.osip_call_id_init(&callId).ThrowOnError();
             return callId;
         }
 
@@ -48,7 +48,7 @@ namespace oSIP.Net
             var callId = new CallIdHeader();
 
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_call_id_parse(callId._native, strPtr);
+            NativeMethods.osip_call_id_parse(callId._native, strPtr).ThrowOnError();
             Marshal.FreeHGlobal(strPtr);
 
             return callId;
@@ -63,14 +63,14 @@ namespace oSIP.Net
         public CallIdHeader DeepClone()
         {
             osip_call_id_t* callId;
-            NativeMethods.osip_call_id_clone(_native, &callId);
+            NativeMethods.osip_call_id_clone(_native, &callId).ThrowOnError();
             return new CallIdHeader(callId, true);
         }
 
         public override string ToString()
         {
             IntPtr ptr;
-            NativeMethods.osip_call_id_to_str(_native, &ptr);
+            NativeMethods.osip_call_id_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
             NativeMethods.osip_free(ptr.ToPointer());
