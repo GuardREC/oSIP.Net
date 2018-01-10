@@ -26,5 +26,5 @@ namespace oSIP.Net
         public static readonly osip_content_length_t* Null = (osip_content_length_t*) IntPtr.Zero;
 
         public IntPtr value;
-    };
+    }
 }

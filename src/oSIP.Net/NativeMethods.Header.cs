@@ -27,5 +27,5 @@ namespace oSIP.Net
 
         public IntPtr hname;
         public IntPtr hvalue;
-    };
+    }
 }

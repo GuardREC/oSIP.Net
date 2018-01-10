@@ -34,5 +34,5 @@ namespace oSIP.Net
         public IntPtr port;
         public IntPtr comment;
         public osip_list_t via_params;
-    };
+    }
 }

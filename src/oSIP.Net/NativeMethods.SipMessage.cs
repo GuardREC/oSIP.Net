@@ -64,5 +64,5 @@ namespace oSIP.Net
         public osip_list_t headers;
 
         public osip_list_t bodies;
-    };
+    }
 }

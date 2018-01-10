@@ -45,5 +45,5 @@ namespace oSIP.Net
         public IntPtr gssapi_data;
         public IntPtr crand;
         public IntPtr cnum;
-    };
+    }
 }

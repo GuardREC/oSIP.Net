@@ -31,5 +31,5 @@ namespace oSIP.Net
         public IntPtr displayname;
         public osip_uri_t* url;
         public osip_list_t gen_params;
-    };
+    }
 }

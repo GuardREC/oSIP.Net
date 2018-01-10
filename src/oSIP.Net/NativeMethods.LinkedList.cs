@@ -35,5 +35,5 @@ namespace oSIP.Net
     {
         private readonly __node_t* next;
         private readonly IntPtr element;
-    };
+    }
 }

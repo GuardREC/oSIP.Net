@@ -30,5 +30,5 @@ namespace oSIP.Net
 
         public IntPtr element;
         public osip_list_t gen_params;
-    };
+    }
 }

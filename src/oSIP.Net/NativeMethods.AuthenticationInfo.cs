@@ -39,5 +39,5 @@ namespace oSIP.Net
         public IntPtr realm;
         public IntPtr targetname;
         public IntPtr opaque;
-    };
+    }
 }

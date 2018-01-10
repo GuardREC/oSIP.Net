@@ -30,5 +30,5 @@ namespace oSIP.Net
 
         public IntPtr number;
         public IntPtr host;
-    };
+    }
 }
