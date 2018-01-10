@@ -150,7 +150,7 @@ namespace oSIP.Net.Tests
             const string str =
                 "INVITE sip:john.smith@abc.com SIP/2.0\r\n" +
                 "From: John Smith <sip:john.smith@abc.com>\r\n" +
-                "To: Joe Shmoe <sip:joe.shmoe@abc.com>\r\n";
+                "To: Joe Shmoe <sip:joe.shmoe@abc.com>\r\n\r\n";
             using (var original = (SipRequest) SipMessage.Parse(str))
             using (var cloned = original.DeepClone())
             {
