@@ -12,8 +12,9 @@ namespace oSIP.Net.Tests
             {
                 body.Data = "abc";
                 body.ContentType = ContentTypeHeader.Parse("text/plain");
+                body.Headers.Add(new GenericHeader("foo", "bar"));
 
-                Assert.That(body.ToString(), Is.EqualTo("content-type: text/plain\r\n\r\nabc"));
+                Assert.That(body.ToString(), Is.EqualTo("content-type: text/plain\r\nFoo: bar\r\n\r\nabc"));
             }
         }
 

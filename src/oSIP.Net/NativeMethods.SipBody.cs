@@ -33,7 +33,7 @@ namespace oSIP.Net
 
         public IntPtr body;
         public ulong length;
-        public osip_list_t* headers;
+        public readonly osip_list_t* headers;
         public osip_content_type_t* content_type;
     }
 }

@@ -14,6 +14,10 @@ namespace oSIP.Net
         internal SipBody(osip_body_t* native, bool isOwner) : base(isOwner)
         {
             _native = native;
+            Headers = new LinkedList<GenericHeader>(
+                _native->headers,
+                parameter => new IntPtr(parameter.TakeOwnership()),
+                ptr => new GenericHeader((osip_header_t*) ptr, false));
         }
 
         private static osip_body_t* Create()
@@ -47,6 +51,8 @@ namespace oSIP.Net
                     : osip_content_type_t.Null;
             }
         }
+
+        public LinkedList<GenericHeader> Headers { get; }
 
         public static SipBody Parse(string str)
         {
