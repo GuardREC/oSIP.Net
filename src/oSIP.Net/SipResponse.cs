@@ -27,5 +27,14 @@ namespace oSIP.Net
                 Native->reason_phrase = Marshal.StringToHGlobalAnsi(value);
             }
         }
+
+        public SipResponse DeepClone()
+        {
+            return DeepClone(ptr =>
+            {
+                var native = (osip_message_t*) ptr.ToPointer();
+                return new SipResponse(native);
+            });
+        }
     }
 }

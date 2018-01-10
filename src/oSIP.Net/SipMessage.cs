@@ -260,6 +260,13 @@ namespace oSIP.Net
             return message;
         }
 
+        protected T DeepClone<T>(Func<IntPtr, T> func) where T : SipMessage
+        {
+            osip_message_t* native;
+            NativeMethods.osip_message_clone(Native, &native).ThrowOnError();
+            return func(new IntPtr(native));
+        }
+
         public override string ToString()
         {
             IntPtr ptr;

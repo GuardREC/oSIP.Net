@@ -35,5 +35,14 @@ namespace oSIP.Net
                     : osip_uri_t.Null;
             }
         }
+
+        public SipRequest DeepClone()
+        {
+            return DeepClone(ptr =>
+            {
+                var native = (osip_message_t*) ptr.ToPointer();
+                return new SipRequest(native);
+            });
+        }
     }
 }

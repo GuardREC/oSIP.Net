@@ -6,7 +6,7 @@ namespace oSIP.Net.Tests
     public class SipRequestTests
     {
         [Test]
-        public void Shall_stringify_header()
+        public void Shall_stringify_request()
         {
             using (var request = new SipRequest())
             {
@@ -74,7 +74,7 @@ namespace oSIP.Net.Tests
         }
 
         [Test]
-        public void Shall_parse_message()
+        public void Shall_parse_request()
         {
             const string str =
                 "INVITE sip:john.smith@abc.com SIP/2.0\r\n" +
@@ -141,6 +141,23 @@ namespace oSIP.Net.Tests
                 Assert.That(request.OtherHeaders[0].Value, Is.EqualTo("sip:alan.smithee@abc.com"));
                 Assert.That(request.ContentLength.ToString(), Is.EqualTo("12"));
                 Assert.That(request.Bodies[0].ToString(), Is.EqualTo("Hello world!"));
+            }
+        }
+
+        [Test]
+        public void Shall_clone_request()
+        {
+            const string str =
+                "INVITE sip:john.smith@abc.com SIP/2.0\r\n" +
+                "From: John Smith <sip:john.smith@abc.com>\r\n" +
+                "To: Joe Shmoe <sip:joe.shmoe@abc.com>\r\n";
+            using (var original = (SipRequest) SipMessage.Parse(str))
+            using (var cloned = original.DeepClone())
+            {
+                original.Method = "REGISTER";
+
+                Assert.That(cloned.ToString(), Does.Contain("INVITE"));
+                Assert.That(original.Method, Does.Contain("REGISTER"));
             }
         }
     }
