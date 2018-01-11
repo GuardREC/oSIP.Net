@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace oSIP.Net
 {
-    public unsafe class LinkedList<T>
+    public unsafe class LinkedList<T> : IReadOnlyCollection<T>
     {
         private readonly osip_list_t* _native;
         private readonly Func<T, IntPtr> _toNative;
@@ -30,7 +32,7 @@ namespace oSIP.Net
             _fromNative = fromNative;
         }
 
-        public int Size
+        public int Count
         {
             get
             {
@@ -42,12 +44,12 @@ namespace oSIP.Net
 
         public void Add(T item)
         {
-            Insert(Size, item);
+            Insert(Count, item);
         }
 
         public void Insert(int index, T item)
         {
-            if (index < 0 || index > Size)
+            if (index < 0 || index > Count)
             {
                 throw new IndexOutOfRangeException();
             }
@@ -58,7 +60,7 @@ namespace oSIP.Net
 
         public void RemoveAt(int index)
         {
-            if (index < 0 || index >= Size)
+            if (index < 0 || index >= Count)
             {
                 throw new IndexOutOfRangeException();
             }
@@ -70,13 +72,56 @@ namespace oSIP.Net
         {
             get
             {
-                if (index < 0 || index >= Size)
+                if (index < 0 || index >= Count)
                 {
                     throw new IndexOutOfRangeException();
                 }
 
                 void* itemPtr = NativeMethods.osip_list_get(_native, index);
                 return _fromNative(new IntPtr(itemPtr));
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        private class Enumerator : IEnumerator<T>
+        {
+            private readonly LinkedList<T> _list;
+            private int _index;
+
+            public Enumerator(LinkedList<T> list)
+            {
+                _list = list;
+                _index = -1;
+            }
+
+            public bool MoveNext()
+            {
+                _index++;
+                return _index < _list.Count;
+            }
+
+            public void Reset()
+            {
+                _index = -1;
+            }
+
+            public T Current => _index > -1 && _index < _list.Count 
+                ? _list[_index] 
+                : default(T);
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
             }
         }
     }

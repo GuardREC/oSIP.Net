@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
@@ -12,7 +13,7 @@ namespace oSIP.Net.Tests
         {
             LinkedList<string> list = CreateList();
 
-            Assert.That(list.Size, Is.EqualTo(0));
+            Assert.That(list.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -22,7 +23,7 @@ namespace oSIP.Net.Tests
 
             list.Add("42");
 
-            Assert.That(list.Size, Is.EqualTo(1));
+            Assert.That(list.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -33,7 +34,7 @@ namespace oSIP.Net.Tests
             list.Add("42");
             list.RemoveAt(0);
 
-            Assert.That(list.Size, Is.EqualTo(0));
+            Assert.That(list.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -106,6 +107,62 @@ namespace oSIP.Net.Tests
             {
                 list.RemoveAt(0);
             }, Throws.Exception.TypeOf<IndexOutOfRangeException>());
+        }
+
+        [Test]
+        public void Shall_enumerate_empty_list()
+        {
+            LinkedList<string> list = CreateList();
+
+            Assert.That(list, Is.Empty);
+        }
+
+        [Test]
+        public void Shall_enumerate_list()
+        {
+            LinkedList<string> list = CreateList();
+            list.Add("foo");
+            list.Add("bar");
+
+            Assert.That(list, Is.EquivalentTo(new[] {"foo", "bar"}));
+            // ReSharper disable once UseCollectionCountProperty
+            Assert.That(list.Count(), Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Shall_for_each_list()
+        {
+            LinkedList<string> list = CreateList();
+            list.Add("foo");
+            list.Add("bar");
+            
+            var index = 0;
+            foreach (var s in list)
+            {
+                Assert.That(s, Is.EqualTo(list[index++]));
+            }
+        }
+
+        [Test]
+        public void Shall_filter_list()
+        {
+            LinkedList<string> list = CreateList();
+            list.Add("foo");
+            list.Add("bar");
+            
+            Assert.That(list.FirstOrDefault(x => x == "foo"), Is.EqualTo("foo"));
+            Assert.That(list.FirstOrDefault(x => x == "baz"), Is.Null);
+        }
+
+        [Test]
+        public void Shall_contain()
+        {
+            LinkedList<string> list = CreateList();
+            list.Add("foo");
+            list.Add("bar");
+
+            Assert.That(list.Contains("foo"), Is.EqualTo(true));
+            Assert.That(list.Contains("baz"), Is.EqualTo(false));
         }
 
         private static LinkedList<string> CreateList()

@@ -126,7 +126,7 @@ namespace oSIP.Net.Tests
                 Assert.That(request.CallInfos[0].ToString(), Is.EqualTo("<http://www.abc.com/photo.png>;purpose=icon"));
                 Assert.That(request.ContentType.ToString(), Is.EqualTo("text/plain"));
                 Assert.That(request.MimeVersion.ToString(), Is.EqualTo("1.0"));
-                Assert.That(request.Allows.Size, Is.EqualTo(2));
+                Assert.That(request.Allows.Count, Is.EqualTo(2));
                 Assert.That(request.Allows[0].ToString(), Is.EqualTo("INVITE"));
                 Assert.That(request.Allows[1].ToString(), Is.EqualTo("BYE"));
                 Assert.That(request.ContentEncodings[0].ToString(), Is.EqualTo("deflate"));
