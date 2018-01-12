@@ -7,16 +7,16 @@ namespace oSIP.Net
 {
     internal unsafe partial class NativeMethods
     {
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_content_length_init(osip_content_length_t** header);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern void osip_content_length_free(osip_content_length_t* header);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_content_length_parse(osip_content_length_t* header, IntPtr hvalue);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_content_length_to_str(osip_content_length_t* header, IntPtr* dest);
     }
 

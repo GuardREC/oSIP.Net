@@ -49,12 +49,27 @@ namespace oSIP.Net
 
             string filename = Marshal.PtrToStringAnsi(filenamePtr);
 
-            IntPtr buffer = Marshal.AllocHGlobal(2024);
+            IntPtr buffer = Marshal.AllocHGlobal(2048);
 
-            int count = NativeMethods.vsprintf(buffer, formatPtr, argPtr);
+            int count = 0;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                count = NativeMethods.vsprintf_win(buffer, formatPtr, argPtr);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                count = NativeMethods.vsprintf_linux(buffer, formatPtr, argPtr);
+            }
+            else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                count = NativeMethods.vsprintf_mac(buffer, formatPtr, argPtr);
+            }
+
             var message = count >= 0
                 ? Marshal.PtrToStringAnsi(buffer, count)
                 : Marshal.PtrToStringAnsi(formatPtr);
+
+            Marshal.FreeHGlobal(buffer);
 
             _callback(new TraceEvent(filename, line, level, message));
         }

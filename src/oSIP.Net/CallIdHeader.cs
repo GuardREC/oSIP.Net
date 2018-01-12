@@ -73,7 +73,7 @@ namespace oSIP.Net
             NativeMethods.osip_call_id_to_str(_native, &ptr).ThrowOnError();
 
             string str = Marshal.PtrToStringAnsi(ptr);
-            NativeMethods.osip_free(ptr.ToPointer());
+            Marshal.FreeHGlobal(ptr);
 
             return str;
         }

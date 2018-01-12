@@ -7,10 +7,10 @@ namespace oSIP.Net
 {
     internal unsafe partial class NativeMethods
     {
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_uri_param_init(osip_uri_param_t** url_param);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern void osip_uri_param_free (osip_uri_param_t* url_param);
 
         //int osip_uri_param_clone (const osip_uri_param_t * url_param, osip_uri_param_t ** dest);
@@ -19,19 +19,19 @@ namespace oSIP.Net
 
         //int osip_uri_param_get_byname (osip_list_t * url_params, char *name, osip_uri_param_t ** dest);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_uri_init(osip_uri_t** url);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern void osip_uri_free(osip_uri_t* url);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_uri_parse(osip_uri_t* url, IntPtr buf);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_uri_to_str(osip_uri_t* url, IntPtr* dest);
 
-        [DllImport("osipparser2.dll")]
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_uri_clone(osip_uri_t* url, osip_uri_t** dest);
 
         //int osip_uri_to_str_canonical (const osip_uri_t * url, char **dest);
