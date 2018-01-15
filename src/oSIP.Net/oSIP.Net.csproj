@@ -6,13 +6,14 @@
     <PackageId>oSIP.Net</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
     <Authors>GuardREC AS</Authors>
-    <Description>.NET wrapper for the oSIP library</Description>
+    <Description>.NET wrapper of the oSIP library</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>Copyright 2018 (c) GuardREC AS. All rights reserved.</Copyright>
     <PackageTags>sip</PackageTags>
     <RepositoryUrl>https://github.com/GuardREC/oSIP.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <IncludeBuildOutput>true</IncludeBuildOutput>
+    <Title>oSIP.Net</Title>
   </PropertyGroup>
     
   <ItemGroup>
