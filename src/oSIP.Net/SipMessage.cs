@@ -269,6 +269,8 @@ namespace oSIP.Net
 
         public override string ToString()
         {
+            NativeMethods.osip_message_force_update(Native).ThrowOnError();
+
             IntPtr ptr;
             int length;
             NativeMethods.osip_message_to_str(Native, &ptr, &length).ThrowOnError();

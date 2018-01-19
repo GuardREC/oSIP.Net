@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.2</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PackageId>oSIP.Net</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <Authors>GuardREC AS</Authors>
     <Description>.NET wrapper of the oSIP library</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

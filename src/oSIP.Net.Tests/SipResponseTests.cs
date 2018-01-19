@@ -21,6 +21,25 @@ namespace oSIP.Net.Tests
         }
 
         [Test]
+        public void Shall_not_return_cached_stringified_response()
+        {
+            using (var response = new SipResponse())
+            {
+                response.Version = "SIP/2.0";
+                response.StatusCode = 200;
+                response.ReasonPhrase = "OK";
+
+                string before = response.ToString();
+
+                response.StatusCode = 201;
+
+                string after = response.ToString();
+
+                Assert.That(before, Is.Not.EqualTo(after));
+            }
+        }
+
+        [Test]
         public void Shall_parse_response()
         {
             const string str =

@@ -17,6 +17,9 @@ namespace oSIP.Net
         public static extern ErrorCode osip_message_parse(osip_message_t* sip, IntPtr buf, ulong length);
 
         [DllImport("osipparser2")]
+        public static extern ErrorCode osip_message_force_update(osip_message_t* sip);
+
+        [DllImport("osipparser2")]
         public static extern ErrorCode osip_message_to_str(osip_message_t* sip, IntPtr* dest, int* message_length);
 
         [DllImport("osipparser2")]
