@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Text;
+using NUnit.Framework;
 
 namespace oSIP.Net.Tests
 {
@@ -40,12 +41,26 @@ namespace oSIP.Net.Tests
         }
 
         [Test]
-        public void Shall_parse_response()
+        public void Shall_parse_response_string()
         {
             const string str =
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n";
             using (var response = (SipResponse) SipMessage.Parse(str))
+            {
+                Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
+                Assert.That(response.StatusCode, Is.EqualTo(200));
+                Assert.That(response.ReasonPhrase, Is.EqualTo("OK"));
+            }
+        }
+
+        [Test]
+        public void Shall_parse_response_bytes()
+        {
+            const string str =
+                "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
+                "\r\n";
+            using (var response = (SipResponse)SipMessage.Parse(Encoding.UTF8.GetBytes(str)))
             {
                 Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
                 Assert.That(response.StatusCode, Is.EqualTo(200));

@@ -253,6 +253,19 @@ namespace oSIP.Net
                 : new SipResponse(message);
         }
 
+        public static SipMessage Parse(ArraySegment<byte> buffer)
+        {
+            osip_message_t* message = Create();
+
+            fixed (byte* p = &buffer.Array[buffer.Offset])
+            {
+                NativeMethods.osip_message_parse(message, (IntPtr) p, (ulong)buffer.Count).ThrowOnError();
+                return message->status_code == 0
+                    ? (SipMessage)new SipRequest(message)
+                    : new SipResponse(message);
+            }
+        }
+
         private static osip_message_t* Create()
         {
             osip_message_t* message;
