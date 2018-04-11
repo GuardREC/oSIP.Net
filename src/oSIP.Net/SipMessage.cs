@@ -242,14 +242,31 @@ namespace oSIP.Net
 
         public static SipMessage Parse(string str)
         {
-            osip_message_t* message = Create();
-
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_message_parse(message, strPtr, (ulong) str.Length).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
+            try
+            {
+                return Parse(strPtr, (ulong) str.Length);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
+        }
 
+        public static SipMessage Parse(ArraySegment<byte> buffer)
+        {
+            fixed (byte* ptr = &buffer.Array[buffer.Offset])
+            {
+                return Parse((IntPtr) ptr, (ulong) buffer.Count);
+            }
+        }
+
+        private static SipMessage Parse(IntPtr ptr, ulong length)
+        {
+            osip_message_t* message = Create();
+            NativeMethods.osip_message_parse(message, ptr, length).ThrowOnError();
             return message->status_code == 0
-                ? (SipMessage) new SipRequest(message)
+                ? (SipMessage)new SipRequest(message)
                 : new SipResponse(message);
         }
 
@@ -279,6 +296,30 @@ namespace oSIP.Net
             Marshal.FreeHGlobal(ptr);
 
             return str;
+        }
+
+        public bool TryCopyTo(byte[] buffer, int offset, out int count)
+        {
+            IntPtr ptr = IntPtr.Zero;
+            try
+            {
+                int length;
+                if (NativeMethods.osip_message_force_update(Native) < 0 ||
+                    NativeMethods.osip_message_to_str(Native, &ptr, &length) < 0 ||
+                    buffer.Length - offset < length)
+                {
+                    count = 0;
+                    return false;
+                }
+            
+                Marshal.Copy(ptr, buffer, offset, length);
+                count = length;
+                return true;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
+            }
         }
 
         public void Dispose()
