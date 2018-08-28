@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\lib\osipparser2.dll" Link="osipparser2.dll">
+    <None Include="..\..\deps\libosip\win-x64\osipparser2.dll" Link="osipparser2.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\lib\libosipparser2.so" Link="osipparser2.so">
+    <None Include="..\..\deps\libosip\linux-x64\libosipparser2.so" Link="osipparser2.so">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

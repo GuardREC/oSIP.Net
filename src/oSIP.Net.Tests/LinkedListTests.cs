@@ -165,9 +165,12 @@ namespace oSIP.Net.Tests
             Assert.That(list.Contains("baz"), Is.EqualTo(false));
         }
 
-        private static LinkedList<string> CreateList()
+        private static unsafe LinkedList<string> CreateList()
         {
-            return new LinkedList<string>(Marshal.StringToHGlobalAnsi, Marshal.PtrToStringAnsi);
+            var native = (osip_list_t*) Marshal.AllocHGlobal(Marshal.SizeOf(typeof(osip_list_t)));
+            NativeMethods.osip_list_init(native).ThrowOnError(() => Marshal.FreeHGlobal((IntPtr) native));
+
+            return new LinkedList<string>(native, Marshal.StringToHGlobalAnsi, Marshal.PtrToStringAnsi);
         }
     }
 }

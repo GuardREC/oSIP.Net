@@ -17,6 +17,11 @@
             return Parse<ProxyAuthenticateHeader>(str);
         }
 
+        public static bool TryParse(string str, out ProxyAuthenticateHeader header)
+        {
+            return TryParse<ProxyAuthenticateHeader>(str, out header);
+        }
+
         public unsafe ProxyAuthenticateHeader DeepClone()
         {
             return DeepClone(ptr =>

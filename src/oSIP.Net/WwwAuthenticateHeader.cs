@@ -17,6 +17,11 @@
             return Parse<WwwAuthenticateHeader>(str);
         }
 
+        public static bool TryParse(string str, out WwwAuthenticateHeader header)
+        {
+            return TryParse<WwwAuthenticateHeader>(str, out header);
+        }
+
         public unsafe WwwAuthenticateHeader DeepClone()
         {
             return DeepClone(ptr =>

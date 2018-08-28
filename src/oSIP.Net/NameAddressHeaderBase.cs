@@ -58,13 +58,27 @@ namespace oSIP.Net
 
         protected static T Parse<T>(string str) where T : NameAddressHeaderBase, new()
         {
-            var from = new T();
+            TryParseCore(str, out T header).ThrowOnError(header);
+            return header;
+        }
 
+        protected static bool TryParse<T>(string str, out T header) where T : NameAddressHeaderBase, new()
+        {
+            return TryParseCore(str, out header).EnsureSuccess(ref header);
+        }
+
+        private static ErrorCode TryParseCore<T>(string str, out T header) where T : NameAddressHeaderBase, new()
+        {
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_from_parse(from._native, strPtr).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
-            return from;
+            try
+            {
+                header = new T();
+                return NativeMethods.osip_from_parse(header._native, strPtr);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         internal osip_from_t* TakeOwnership()

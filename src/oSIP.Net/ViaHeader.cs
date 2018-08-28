@@ -81,13 +81,27 @@ namespace oSIP.Net
 
         public static ViaHeader Parse(string str)
         {
-            var header = new ViaHeader();
-
-            var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_via_parse(header._native, strPtr).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
+            TryParseCore(str, out ViaHeader header).ThrowOnError(header);
             return header;
+        }
+
+        public static bool TryParse(string str, out ViaHeader header)
+        {
+            return TryParseCore(str, out header).EnsureSuccess(ref header);
+        }
+
+        private static ErrorCode TryParseCore(string str, out ViaHeader header)
+        {
+            var strPtr = Marshal.StringToHGlobalAnsi(str);
+            try
+            {
+                header = new ViaHeader();
+                return NativeMethods.osip_via_parse(header._native, strPtr);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         internal osip_via_t* TakeOwnership()

@@ -16,5 +16,10 @@
         {
             return Parse<ContentLengthHeader>(str);
         }
+
+        public static bool TryParse(string str, out ContentLengthHeader header)
+        {
+            return TryParse<ContentLengthHeader>(str, out header);
+        }
     }
 }

@@ -17,6 +17,11 @@
             return Parse<ContactHeader>(str);
         }
 
+        public static bool TryParse(string str, out ContactHeader header)
+        {
+            return TryParse<ContactHeader>(str, out header);
+        }
+
         public unsafe ContactHeader DeepClone()
         {
             return DeepClone(ptr =>

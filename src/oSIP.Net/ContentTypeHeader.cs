@@ -17,6 +17,11 @@
             return Parse<ContentTypeHeader>(str);
         }
 
+        public static bool TryParse(string str, out ContentTypeHeader header)
+        {
+            return TryParse<ContentTypeHeader>(str, out header);
+        }
+
         public unsafe ContentTypeHeader DeepClone()
         {
             return DeepClone(ptr =>

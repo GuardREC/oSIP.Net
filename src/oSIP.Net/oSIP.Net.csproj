@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.2</TargetFramework>
+    <TargetFramework>netstandard1.1</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PackageId>oSIP.Net</PackageId>
     <Authors>GuardREC AS</Authors>
@@ -14,19 +14,17 @@
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <Title>oSIP.Net</Title>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
-    
+
   <ItemGroup>
-    <None Include="..\..\lib\osipparser2.dll" Link="osipparser2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\..\deps\libosip\win-x64\osipparser2.dll" Link="osipparser2.dll">
       <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)</PackagePath>
+      <PackagePath>runtimes/win-x64/native</PackagePath>
     </None>
-    <None Include="..\..\lib\libosipparser2.so" Link="osipparser2.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\..\deps\libosip\linux-x64\libosipparser2.so" Link="osipparser2.so">
       <Pack>true</Pack>
-      <PackagePath>lib\$(TargetFramework)</PackagePath>
+      <PackagePath>runtimes/linux-x64/native</PackagePath>
     </None>
   </ItemGroup>
 

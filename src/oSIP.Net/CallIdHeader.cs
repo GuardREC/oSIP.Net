@@ -45,13 +45,27 @@ namespace oSIP.Net
 
         public static CallIdHeader Parse(string str)
         {
-            var callId = new CallIdHeader();
+            TryParseCore(str, out CallIdHeader header).ThrowOnError(header);
+            return header;
+        }
 
+        public static bool TryParse(string str, out CallIdHeader header)
+        {
+            return TryParseCore(str, out header).EnsureSuccess(ref header);
+        }
+
+        private static ErrorCode TryParseCore(string str, out CallIdHeader header)
+        {
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_call_id_parse(callId._native, strPtr).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
-            return callId;
+            try
+            {
+                header = new CallIdHeader();
+                return NativeMethods.osip_call_id_parse(header._native, strPtr);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         internal osip_call_id_t* TakeOwnership()

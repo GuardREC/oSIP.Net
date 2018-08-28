@@ -17,6 +17,11 @@
             return Parse<ErrorInfoHeader>(str);
         }
 
+        public static bool TryParse(string str, out ErrorInfoHeader header)
+        {
+            return TryParse<ErrorInfoHeader>(str, out header);
+        }
+
         public unsafe ErrorInfoHeader DeepClone()
         {
             return DeepClone(ptr =>
