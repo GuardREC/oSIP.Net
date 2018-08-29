@@ -263,11 +263,54 @@ namespace oSIP.Net
 
         private static SipMessage Parse(IntPtr ptr, ulong length)
         {
-            osip_message_t* message = Create();
-            NativeMethods.osip_message_parse(message, ptr, length).ThrowOnError();
-            return message->status_code == 0
-                ? (SipMessage)new SipRequest(message)
-                : new SipResponse(message);
+            TryParseCore(ptr, length, out SipMessage message).ThrowOnError(message);
+            return message;
+        }
+
+        public static bool TryParse(ArraySegment<byte> buffer, out SipMessage message)
+        {
+            fixed (byte* ptr = &buffer.Array[buffer.Offset])
+            {
+                return TryParse((IntPtr)ptr, (ulong)buffer.Count, out message);
+            }
+        }
+
+        public static bool TryParse(string str, out SipMessage message)
+        {
+            var strPtr = Marshal.StringToHGlobalAnsi(str);
+            try
+            {
+                return TryParse(strPtr, (ulong) str.Length, out message);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
+        }
+
+        private static bool TryParse(IntPtr ptr, ulong length, out SipMessage message)
+        {
+            return TryParseCore(ptr, length, out message).EnsureSuccess(ref message);
+        }
+
+        private static ErrorCode TryParseCore(IntPtr ptr, ulong length, out SipMessage message)
+        {
+            osip_message_t* msg = Create();
+
+            ErrorCode result = NativeMethods.osip_message_parse(msg, ptr, length);
+            if ((int) result >= 0)
+            {
+                message = msg->status_code == 0
+                    ? (SipMessage)new SipRequest(msg)
+                    : new SipResponse(msg);
+            }
+            else
+            {
+                NativeMethods.osip_message_free(msg);
+                message = null;
+            }
+
+            return result;
         }
 
         private static osip_message_t* Create()

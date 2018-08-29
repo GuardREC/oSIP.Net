@@ -17,6 +17,11 @@
             return Parse<AcceptHeader>(str);
         }
 
+        public static bool TryParse(string str, out AcceptHeader header)
+        {
+            return TryParse<AcceptHeader>(str, out header);
+        }
+
         public unsafe AcceptHeader DeepClone()
         {
             return DeepClone(ptr =>

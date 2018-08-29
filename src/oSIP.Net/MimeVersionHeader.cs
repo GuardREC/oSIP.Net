@@ -16,5 +16,10 @@
         {
             return Parse<MimeVersionHeader>(str);
         }
+
+        public static bool TryParse(string str, out MimeVersionHeader header)
+        {
+            return TryParse<MimeVersionHeader>(str, out header);
+        }
     }
 }

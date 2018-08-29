@@ -45,13 +45,27 @@ namespace oSIP.Net
 
         public static CSeqHeader Parse(string str)
         {
-            var cseq = new CSeqHeader();
+            TryParseCore(str, out CSeqHeader header).ThrowOnError(header);
+            return header;
+        }
 
+        public static bool TryParse(string str, out CSeqHeader header)
+        {
+            return TryParseCore(str, out header).EnsureSuccess(ref header);
+        }
+
+        private static ErrorCode TryParseCore(string str, out CSeqHeader header)
+        {
             var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_cseq_parse(cseq._native, strPtr).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
-            return cseq;
+            try
+            {
+                header = new CSeqHeader();
+                return NativeMethods.osip_cseq_parse(header._native, strPtr);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         internal osip_cseq_t* TakeOwnership()

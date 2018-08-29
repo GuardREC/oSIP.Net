@@ -16,5 +16,10 @@
         {
             return Parse<ContentEncodingHeader>(str);
         }
+
+        public static bool TryParse(string str, out ContentEncodingHeader header)
+        {
+            return TryParse<ContentEncodingHeader>(str, out header);
+        }
     }
 }

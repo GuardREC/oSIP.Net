@@ -89,13 +89,27 @@ namespace oSIP.Net
 
         public static SipUri Parse(string str)
         {
-            var uri = new SipUri();
-
-            var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_uri_parse(uri._native, strPtr).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
+            TryParseCore(str, out SipUri uri).ThrowOnError(uri);
             return uri;
+        }
+
+        public static bool TryParse(string str, out SipUri uri)
+        {
+            return TryParseCore(str, out uri).EnsureSuccess(ref uri);
+        }
+
+        private static ErrorCode TryParseCore(string str, out SipUri uri)
+        {
+            var strPtr = Marshal.StringToHGlobalAnsi(str);
+            try
+            {
+                uri = new SipUri();
+                return NativeMethods.osip_uri_parse(uri._native, strPtr);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         internal osip_uri_t* TakeOwnership()

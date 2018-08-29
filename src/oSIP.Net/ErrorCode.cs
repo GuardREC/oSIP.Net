@@ -1,6 +1,6 @@
 ﻿namespace oSIP.Net
 {
-    public enum ErrorCode
+    internal enum ErrorCode
     {
         UndefinedError = -1,
         BadParameter = -2,

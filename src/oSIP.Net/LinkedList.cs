@@ -16,15 +16,6 @@ namespace oSIP.Net
             Parser.InitializeIfNecessary();
         }
 
-        public LinkedList(Func<T, IntPtr> toNative, Func<IntPtr, T> fromNative)
-        {
-            _native = (osip_list_t*) Marshal.AllocHGlobal(Marshal.SizeOf<osip_list_t>());
-            _toNative = toNative;
-            _fromNative = fromNative;
-
-            NativeMethods.osip_list_init(_native).ThrowOnError();
-        }
-
         internal LinkedList(osip_list_t* native, Func<T, IntPtr> toNative, Func<IntPtr, T> fromNative)
         {
             _native = native;

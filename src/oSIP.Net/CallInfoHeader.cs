@@ -17,6 +17,11 @@
             return Parse<CallInfoHeader>(str);
         }
 
+        public static bool TryParse(string str, out CallInfoHeader header)
+        {
+            return TryParse<CallInfoHeader>(str, out header);
+        }
+
         public unsafe CallInfoHeader DeepClone()
         {
             return DeepClone(ptr =>

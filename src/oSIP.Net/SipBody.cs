@@ -56,24 +56,52 @@ namespace oSIP.Net
 
         public static SipBody Parse(string str)
         {
-            var body = new SipBody();
-
-            var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_body_parse(body._native, strPtr, (ulong) str.Length).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
+            TryParseCore(str, out SipBody body).ThrowOnError(body);
             return body;
+        }
+
+        public static bool TryParse(string str, out SipBody body)
+        {
+            return TryParseCore(str, out body).EnsureSuccess(ref body);
+        }
+
+        private static ErrorCode TryParseCore(string str, out SipBody body)
+        {
+            var strPtr = Marshal.StringToHGlobalAnsi(str);
+            try
+            {
+                body = new SipBody();
+                return NativeMethods.osip_body_parse(body._native, strPtr, (ulong) str.Length);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         public static SipBody ParseMime(string str)
         {
-            var body = new SipBody();
-
-            var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_body_parse_mime(body._native, strPtr, (ulong) str.Length).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
+            TryParseMimeCore(str, out SipBody body).ThrowOnError(body);
             return body;
+        }
+
+        public static bool TryParseMime(string str, out SipBody body)
+        {
+            return TryParseMimeCore(str, out body).EnsureSuccess(ref body);
+        }
+
+        private static ErrorCode TryParseMimeCore(string str, out SipBody body)
+        {
+            var strPtr = Marshal.StringToHGlobalAnsi(str);
+            try
+            {
+                body = new SipBody();
+                return NativeMethods.osip_body_parse_mime(body._native, strPtr, (ulong) str.Length);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         internal osip_body_t* TakeOwnership()

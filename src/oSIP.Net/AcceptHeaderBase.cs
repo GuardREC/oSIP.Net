@@ -41,13 +41,27 @@ namespace oSIP.Net
 
         protected static T Parse<T>(string str) where T : AcceptHeaderBase, new()
         {
-            var header = new T();
-
-            var strPtr = Marshal.StringToHGlobalAnsi(str);
-            NativeMethods.osip_accept_encoding_parse(header._native, strPtr).ThrowOnError();
-            Marshal.FreeHGlobal(strPtr);
-
+            TryParseCore(str, out T header).ThrowOnError(header);
             return header;
+        }
+
+        protected static bool TryParse<T>(string str, out T header) where T : AcceptHeaderBase, new()
+        {
+            return TryParseCore(str, out header).EnsureSuccess(ref header);
+        }
+
+        private static ErrorCode TryParseCore<T>(string str, out T header) where T : AcceptHeaderBase, new()
+        {
+            var strPtr = Marshal.StringToHGlobalAnsi(str);
+            try
+            {
+                header = new T();
+                return NativeMethods.osip_accept_encoding_parse(header._native, strPtr);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(strPtr);
+            }
         }
 
         internal osip_accept_encoding_t* TakeOwnership()

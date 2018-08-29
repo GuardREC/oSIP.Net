@@ -16,5 +16,10 @@
         {
             return Parse<AllowHeader>(str);
         }
+
+        public static bool TryParse(string str, out AllowHeader header)
+        {
+            return TryParse<AllowHeader>(str, out header);
+        }
     }
 }

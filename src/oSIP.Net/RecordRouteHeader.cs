@@ -17,6 +17,11 @@
             return Parse<RecordRouteHeader>(str);
         }
 
+        public static bool TryParse(string str, out RecordRouteHeader header)
+        {
+            return TryParse<RecordRouteHeader>(str, out header);
+        }
+
         public unsafe RecordRouteHeader DeepClone()
         {
             return DeepClone(ptr =>

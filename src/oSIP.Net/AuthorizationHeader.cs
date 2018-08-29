@@ -17,6 +17,11 @@
             return Parse<AuthorizationHeader>(str);
         }
 
+        public static bool TryParse(string str, out AuthorizationHeader header)
+        {
+            return TryParse<AuthorizationHeader>(str, out header);
+        }
+
         public unsafe AuthorizationHeader DeepClone()
         {
             return DeepClone(ptr =>
