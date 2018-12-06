@@ -38,6 +38,9 @@ namespace oSIP.Net
 
         ~OwnershipDisposable()
         {
+            var logger = Trace.GetLogger();
+            logger?.Invoke(new TraceEvent(GetType().Name, -1, TraceLevel.Warning, "Dispose is called during finalization. Missing explicit Dispose somewhere."));
+
             if (_isOwner)
             {
                 OnDispose();

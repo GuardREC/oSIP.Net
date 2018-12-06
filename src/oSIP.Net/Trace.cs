@@ -25,6 +25,11 @@ namespace oSIP.Net
             _callback = callback;
         }
 
+        public static Action<TraceEvent> GetLogger()
+        {
+            return _callback;
+        }
+
         public static void SetLevel(TraceLevel level)
         {
             foreach (TraceLevel l in Enum.GetValues(typeof (TraceLevel)))
