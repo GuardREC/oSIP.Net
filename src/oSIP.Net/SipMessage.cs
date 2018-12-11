@@ -373,6 +373,8 @@ namespace oSIP.Net
 
         ~SipMessage()
         {
+            var logger = Trace.GetLogger();
+            logger?.Invoke(new TraceEvent(GetType().Name, -1, TraceLevel.Warning, "SipMessage Dispose is called during finalization. Missing explicit Dispose somewhere."));
             OnDispose();
         }
 
