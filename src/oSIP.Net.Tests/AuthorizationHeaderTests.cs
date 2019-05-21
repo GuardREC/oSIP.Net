@@ -8,24 +8,26 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new AuthorizationHeader();
-            header.AuthenticationType = "Basic";
-            header.Username = "\"a\"";
-            header.Realm = "\"b\"";
-            header.Nonce = "\"c\"";
-            header.Uri = "\"d\"";
-            header.Response = "\"e\"";
-            header.Digest = "\"f\"";
-            header.Algorithm = "\"g\"";
-            header.CNonce = "\"h\"";
-            header.Opaque = "\"i\"";
-            header.MessageQop = "\"j\"";
-            header.NonceCount = "00000001";
-            header.Version = "\"k\"";
-            header.TargetName = "\"l\"";
-            header.GssApiData = "\"m\"";
-            header.CRand = "\"n\"";
-            header.CNum = "\"o\"";
+            var header = new AuthorizationHeader
+            {
+                AuthenticationType = "Basic",
+                Username = "\"a\"",
+                Realm = "\"b\"",
+                Nonce = "\"c\"",
+                Uri = "\"d\"",
+                Response = "\"e\"",
+                Digest = "\"f\"",
+                Algorithm = "\"g\"",
+                CNonce = "\"h\"",
+                Opaque = "\"i\"",
+                MessageQop = "\"j\"",
+                NonceCount = "00000001",
+                Version = "\"k\"",
+                TargetName = "\"l\"",
+                GssApiData = "\"m\"",
+                CRand = "\"n\"",
+                CNum = "\"o\""
+            };
 
             Assert.That(
                 header.ToString(),
@@ -42,8 +44,8 @@ namespace oSIP.Net.Tests
                 "Basic username=\"a\", realm=\"b\", nonce=\"c\", uri=\"d\", response=\"e\", digest=\"f\", " +
                 "algorithm=\"g\", cnonce=\"h\", opaque=\"i\", qop=\"j\", nc=00000001, version=\"k\", " +
                 "targetname=\"l\", gssapi-data=\"m\", crand=\"n\", cnum=\"o\"";
-            var header = AuthorizationHeader.Parse(str);
 
+            Assert.That(AuthorizationHeader.TryParse(str, out AuthorizationHeader header), Is.True);
             Assert.That(header.AuthenticationType, Is.EqualTo("Basic"));
             Assert.That(header.Username, Is.EqualTo("\"a\""));
             Assert.That(header.Realm, Is.EqualTo("\"b\""));

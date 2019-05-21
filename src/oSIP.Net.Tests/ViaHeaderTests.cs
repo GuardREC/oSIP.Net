@@ -8,13 +8,18 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new ViaHeader();
-            header.Version = "2.0";
-            header.Protocol = "UDP";
-            header.Host = "foo.bar.com";
-            header.Port = "1234";
-            header.Comment = "a comment";
-            header.Parameters.Add(new GenericParameter("foo", "bar"));
+            var header = new ViaHeader
+            {
+                Version = "2.0",
+                Protocol = "UDP",
+                Host = "foo.bar.com",
+                Port = "1234",
+                Comment = "a comment",
+                Parameters =
+                {
+                    new GenericParameter("foo", "bar")
+                }
+            };
 
             Assert.That(header.ToString(), Is.EqualTo("SIP/2.0/UDP foo.bar.com:1234;foo=bar (a comment)"));
         }

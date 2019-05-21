@@ -8,18 +8,20 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new WwwAuthenticateHeader();
-            header.AuthenticationType = "Basic";
-            header.Realm = "\"a\"";
-            header.Domain = "\"b\"";
-            header.Nonce = "\"c\"";
-            header.Opaque = "\"d\"";
-            header.Stale = "\"e\"";
-            header.Algorithm = "\"f\"";
-            header.QopOptions = "\"g\"";
-            header.Version = "\"h\"";
-            header.TargetName = "\"i\"";
-            header.GssApiData = "\"j\"";
+            var header = new WwwAuthenticateHeader
+            {
+                AuthenticationType = "Basic",
+                Realm = "\"a\"",
+                Domain = "\"b\"",
+                Nonce = "\"c\"",
+                Opaque = "\"d\"",
+                Stale = "\"e\"",
+                Algorithm = "\"f\"",
+                QopOptions = "\"g\"",
+                Version = "\"h\"",
+                TargetName = "\"i\"",
+                GssApiData = "\"j\""
+            };
 
             Assert.That(
                 header.ToString(),
@@ -34,7 +36,8 @@ namespace oSIP.Net.Tests
             const string str =
                 "Basic realm=\"a\", domain=\"b\", nonce=\"c\", opaque=\"d\", stale=\"e\", algorithm=\"f\", " +
                 "qop=\"g\", version=\"h\", targetname=\"i\", gssapi-data=\"j\"";
-            var header = WwwAuthenticateHeader.Parse(str);
+
+            Assert.That(WwwAuthenticateHeader.TryParse(str, out WwwAuthenticateHeader header), Is.True);
             Assert.That(header.AuthenticationType, Is.EqualTo("Basic"));
             Assert.That(header.Realm, Is.EqualTo("\"a\""));
             Assert.That(header.Domain, Is.EqualTo("\"b\""));

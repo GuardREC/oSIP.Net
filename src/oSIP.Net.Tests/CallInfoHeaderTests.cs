@@ -8,9 +8,14 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new CallInfoHeader();
-            header.Element = "<http://www.abc.com/photo.png>";
-            header.Parameters.Add(new GenericParameter("purpose", "icon"));
+            var header = new CallInfoHeader
+            {
+                Element = "<http://www.abc.com/photo.png>",
+                Parameters =
+                {
+                    new GenericParameter("purpose", "icon")
+                }
+            };
 
             Assert.That(
                 header.ToString(),
@@ -20,8 +25,9 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_parse_header()
         {
-            CallInfoHeader header = CallInfoHeader.Parse("<http://www.abc.com/photo.png>;purpose=icon");
+            const string str = "<http://www.abc.com/photo.png>;purpose=icon";
 
+            Assert.That(CallInfoHeader.TryParse(str, out CallInfoHeader header), Is.True);
             Assert.That(header.Element, Is.EqualTo("<http://www.abc.com/photo.png>"));
             Assert.That(header.Parameters[0].Name, Is.EqualTo("purpose"));
             Assert.That(header.Parameters[0].Value, Is.EqualTo("icon"));

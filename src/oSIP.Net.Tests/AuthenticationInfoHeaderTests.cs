@@ -8,18 +8,20 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new AuthenticationInfoHeader();
-            header.AuthenticationType = "Basic";
-            header.QopOptions = "\"a\"";
-            header.NextNonce = "\"b\"";
-            header.RspAuth = "\"c\"";
-            header.CNonce = "\"d\"";
-            header.NonceCount = "0000000e";
-            header.Snum = "\"f\"";
-            header.Srand = "\"g\"";
-            header.TargetName = "\"h\"";
-            header.Realm = "\"i\"";
-            header.Opaque = "\"j\"";
+            var header = new AuthenticationInfoHeader
+            {
+                AuthenticationType = "Basic",
+                QopOptions = "\"a\"",
+                NextNonce = "\"b\"",
+                RspAuth = "\"c\"",
+                CNonce = "\"d\"",
+                NonceCount = "0000000e",
+                Snum = "\"f\"",
+                Srand = "\"g\"",
+                TargetName = "\"h\"",
+                Realm = "\"i\"",
+                Opaque = "\"j\""
+            };
 
             Assert.That(
                 header.ToString(),
@@ -34,7 +36,8 @@ namespace oSIP.Net.Tests
             const string str =
                 "Basic qop=\"a\", nextnonce=\"b\", rspauth=\"c\", cnonce=\"d\", nc=0000000e, " +
                 "snum=\"f\", srand=\"g\", targetname=\"h\", realm=\"i\", opaque=\"j\"";
-            var header = AuthenticationInfoHeader.Parse(str);
+
+            Assert.That(AuthenticationInfoHeader.TryParse(str, out AuthenticationInfoHeader header), Is.True);
             Assert.That(header.AuthenticationType, Is.EqualTo("Basic"));
             Assert.That(header.QopOptions, Is.EqualTo("\"a\""));
             Assert.That(header.NextNonce, Is.EqualTo("\"b\""));

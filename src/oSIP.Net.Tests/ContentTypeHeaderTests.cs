@@ -8,10 +8,15 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new ContentTypeHeader();
-            header.Type = "application";
-            header.SubType = "sdp";
-            header.Parameters.Add(new GenericParameter("foo", "bar"));
+            var header = new ContentTypeHeader
+            {
+                Type = "application",
+                SubType = "sdp",
+                Parameters =
+                {
+                    new GenericParameter("foo", "bar")
+                }
+            };
 
             Assert.That(header.ToString(), Is.EqualTo("application/sdp; foo=bar"));
         }
@@ -19,7 +24,7 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_parse_header()
         {
-            ContentTypeHeader header = ContentTypeHeader.Parse("application/sdp; foo=bar");
+            Assert.That(ContentTypeHeader.TryParse("application/sdp; foo=bar", out ContentTypeHeader header), Is.True);
             Assert.That(header.Type, Is.EqualTo("application"));
             Assert.That(header.SubType, Is.EqualTo("sdp"));
             Assert.That(header.Parameters[0].Name, Is.EqualTo("foo"));

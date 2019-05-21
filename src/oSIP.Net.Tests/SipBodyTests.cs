@@ -8,10 +8,15 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_body()
         {
-            var body = new SipBody();
-            body.Data = "abc";
-            body.ContentType = ContentTypeHeader.Parse("text/plain");
-            body.Headers.Add(new GenericHeader("foo", "bar"));
+            var body = new SipBody
+            {
+                Data = "abc",
+                ContentType = ContentTypeHeader.Parse("text/plain"),
+                Headers =
+                {
+                    new GenericHeader("foo", "bar")
+                }
+            };
 
             Assert.That(body.ToString(), Is.EqualTo("content-type: text/plain\r\nFoo: bar\r\n\r\nabc"));
         }

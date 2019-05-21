@@ -8,16 +8,22 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new AcceptEncodingHeader();
-            header.Element = "gzip";
-            header.Parameters.Add(new GenericParameter("foo", "bar"));
+            var header = new AcceptEncodingHeader
+            {
+                Element = "gzip",
+                Parameters =
+                {
+                    new GenericParameter("foo", "bar")
+                }
+            };
+
             Assert.That(header.ToString(), Is.EqualTo("gzip;foo=bar"));
         }
 
         [Test]
         public void Shall_parse_header()
         {
-            AcceptEncodingHeader header = AcceptEncodingHeader.Parse("gzip;foo=bar");
+            Assert.That(AcceptEncodingHeader.TryParse("gzip;foo=bar", out AcceptEncodingHeader header), Is.True);
             Assert.That(header.Element, Is.EqualTo("gzip"));
             Assert.That(header.Parameters[0].Name, Is.EqualTo("foo"));
             Assert.That(header.Parameters[0].Value, Is.EqualTo("bar"));

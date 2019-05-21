@@ -10,25 +10,27 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_request()
         {
-            var request = new SipRequest();
-            request.Version = "SIP/2.0";
-            request.Method = "INVITE";
+            var request = new SipRequest
+            {
+                Version = "SIP/2.0",
+                Method = "INVITE",
+                RequestUri = SipUri.Parse("sip:john.smith@abc.com"),
+                From = NameAddressHeader.Parse("John Smith <sip:john.smith@abc.com>"),
+                To = NameAddressHeader.Parse("Joe Shmoe <sip:joe.shmoe@abc.com>"),
+                CallId = CallIdHeader.Parse("1@foo.bar.com"),
+                CSeq = CSeqHeader.Parse("1 INVITE"),
+                ContentType = ContentTypeHeader.Parse("text/plain"),
+                MimeVersion = ContentLengthHeader.Parse("1.0"),
+            };
             request.Vias.Add(ViaHeader.Parse("SIP/2.0/UDP foo.bar.com"));
             request.RecordRoutes.Add(NameAddressHeader.Parse("Tommy Atkins <sip:tommy.atkins@abc.com>"));
             request.Routes.Add(NameAddressHeader.Parse("John Doe <sip:john.doe@abc.com>"));
-            request.RequestUri = SipUri.Parse("sip:john.smith@abc.com");
-            request.From = NameAddressHeader.Parse("John Smith <sip:john.smith@abc.com>");
-            request.To = NameAddressHeader.Parse("Joe Shmoe <sip:joe.shmoe@abc.com>");
-            request.CallId = CallIdHeader.Parse("1@foo.bar.com");
-            request.CSeq = CSeqHeader.Parse("1 INVITE");
             request.Contacts.Add(NameAddressHeader.Parse("Prisoner X <sip:prisoner.x@abc.com>"));
             request.Authorizations.Add(AuthorizationHeader.Parse("Digest username=\"Alice\""));
             request.WwwAuthenticates.Add(WwwAuthenticateHeader.Parse("Digest realm=\"abc.com\""));
             request.ProxyAuthenticates.Add(WwwAuthenticateHeader.Parse("Digest realm=\"xyz.com\""));
             request.ProxyAuthorizations.Add(AuthorizationHeader.Parse("Digest username=\"Bob\""));
             request.CallInfos.Add(CallInfoHeader.Parse("<http://www.abc.com/photo.png>;purpose=icon"));
-            request.ContentType = ContentTypeHeader.Parse("text/plain");
-            request.MimeVersion = ContentLengthHeader.Parse("1.0");
             request.Allows.Add(ContentLengthHeader.Parse("INVITE, ACK, BYE"));
             request.ContentEncodings.Add(ContentLengthHeader.Parse("deflate"));
             request.AlertInfos.Add(CallInfoHeader.Parse("<http://www.abc.com/sound.wav>"));
@@ -76,25 +78,27 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_byteify_request()
         {
-            var request = new SipRequest();
-            request.Version = "SIP/2.0";
-            request.Method = "INVITE";
+            var request = new SipRequest
+            {
+                Version = "SIP/2.0",
+                Method = "INVITE",
+                RequestUri = SipUri.Parse("sip:john.smith@abc.com"),
+                From = NameAddressHeader.Parse("John Smith <sip:john.smith@abc.com>"),
+                To = NameAddressHeader.Parse("Joe Shmoe <sip:joe.shmoe@abc.com>"),
+                CallId = CallIdHeader.Parse("1@foo.bar.com"),
+                CSeq = CSeqHeader.Parse("1 INVITE"),
+                ContentType = ContentTypeHeader.Parse("text/plain"),
+                MimeVersion = ContentLengthHeader.Parse("1.0")
+            };
             request.Vias.Add(ViaHeader.Parse("SIP/2.0/UDP foo.bar.com"));
             request.RecordRoutes.Add(NameAddressHeader.Parse("Tommy Atkins <sip:tommy.atkins@abc.com>"));
             request.Routes.Add(NameAddressHeader.Parse("John Doe <sip:john.doe@abc.com>"));
-            request.RequestUri = SipUri.Parse("sip:john.smith@abc.com");
-            request.From = NameAddressHeader.Parse("John Smith <sip:john.smith@abc.com>");
-            request.To = NameAddressHeader.Parse("Joe Shmoe <sip:joe.shmoe@abc.com>");
-            request.CallId = CallIdHeader.Parse("1@foo.bar.com");
-            request.CSeq = CSeqHeader.Parse("1 INVITE");
             request.Contacts.Add(NameAddressHeader.Parse("Prisoner X <sip:prisoner.x@abc.com>"));
             request.Authorizations.Add(AuthorizationHeader.Parse("Digest username=\"Alice\""));
             request.WwwAuthenticates.Add(WwwAuthenticateHeader.Parse("Digest realm=\"abc.com\""));
             request.ProxyAuthenticates.Add(WwwAuthenticateHeader.Parse("Digest realm=\"xyz.com\""));
             request.ProxyAuthorizations.Add(AuthorizationHeader.Parse("Digest username=\"Bob\""));
             request.CallInfos.Add(CallInfoHeader.Parse("<http://www.abc.com/photo.png>;purpose=icon"));
-            request.ContentType = ContentTypeHeader.Parse("text/plain");
-            request.MimeVersion = ContentLengthHeader.Parse("1.0");
             request.Allows.Add(ContentLengthHeader.Parse("INVITE, ACK, BYE"));
             request.ContentEncodings.Add(ContentLengthHeader.Parse("deflate"));
             request.AlertInfos.Add(CallInfoHeader.Parse("<http://www.abc.com/sound.wav>"));

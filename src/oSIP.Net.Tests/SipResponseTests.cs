@@ -10,10 +10,12 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_response()
         {
-            var response = new SipResponse();
-            response.Version = "SIP/2.0";
-            response.StatusCode = 200;
-            response.ReasonPhrase = "OK";
+            var response = new SipResponse
+            {
+                Version = "SIP/2.0",
+                StatusCode = 200,
+                ReasonPhrase = "OK"
+            };
 
             Assert.That(response.ToString(), Is.EqualTo(
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
@@ -23,10 +25,12 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_byteify_response()
         {
-            var response = new SipResponse();
-            response.Version = "SIP/2.0";
-            response.StatusCode = 200;
-            response.ReasonPhrase = "OK";
+            var response = new SipResponse
+            {
+                Version = "SIP/2.0",
+                StatusCode = 200,
+                ReasonPhrase = "OK"
+            };
 
             var buffer = new byte[ushort.MaxValue];
             response.TryCopyTo(buffer, 0, out int length);
@@ -40,10 +44,12 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_not_return_cached_stringified_response()
         {
-            var response = new SipResponse();
-            response.Version = "SIP/2.0";
-            response.StatusCode = 200;
-            response.ReasonPhrase = "OK";
+            var response = new SipResponse
+            {
+                Version = "SIP/2.0",
+                StatusCode = 200,
+                ReasonPhrase = "OK"
+            };
 
             string before = response.ToString();
 

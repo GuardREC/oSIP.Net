@@ -8,18 +8,25 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_set_url_to_null()
         {
-            var header = new NameAddressHeader();
-            header.Url = null;
+            var header = new NameAddressHeader
+            {
+                Url = null
+            };
             Assert.That(header.Url, Is.Null);
         }
 
         [Test]
         public void Shall_stringify_header()
         {
-            var header = new NameAddressHeader();
-            header.DisplayName = "Mr President";
-            header.Url = SipUri.Parse("sip:donald@trump.usa");
-            header.Parameters.Add(new GenericParameter("foo", "bar"));
+            var header = new NameAddressHeader
+            {
+                DisplayName = "Mr President",
+                Url = SipUri.Parse("sip:donald@trump.usa"),
+                Parameters =
+                {
+                    new GenericParameter("foo", "bar")
+                }
+            };
 
             Assert.That(
                 header.ToString(),
@@ -29,7 +36,9 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_parse_header()
         {
-            NameAddressHeader header = NameAddressHeader.Parse("Mr President <sip:donald@trump.gov>;foo=bar");
+            const string str = "Mr President <sip:donald@trump.gov>;foo=bar";
+
+            Assert.That(NameAddressHeader.TryParse(str, out NameAddressHeader header), Is.True);
             Assert.That(header.DisplayName, Is.EqualTo("Mr President"));
             Assert.That(header.Url.ToString(), Is.EqualTo("sip:donald@trump.gov"));
             Assert.That(header.Parameters[0].Name, Is.EqualTo("foo"));
