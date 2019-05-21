@@ -1,137 +1,140 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace oSIP.Net
 {
-    public unsafe class ViaHeader : OwnershipDisposable
+    public unsafe class ViaHeader
     {
-        private osip_via_t* _native;
-
-        public ViaHeader() : this(Create(), true)
+        public ViaHeader()
         {
+            Parameters = new List<GenericParameter>();
         }
 
-        internal ViaHeader(osip_via_t* native, bool isOwner) : base(isOwner)
+        public string Version { get; set; }
+
+        public string Protocol { get; set; }
+
+        public string Host { get; set; }
+
+        public string Port { get; set; }
+
+        public string Comment { get; set; }
+
+        public List<GenericParameter> Parameters { get; }
+
+        internal static ViaHeader FromNative(osip_via_t* native)
         {
-            _native = native;
-            Parameters = new LinkedList<GenericParameter>(
-                &_native->via_params,
-                parameter => new IntPtr(parameter.TakeOwnership()),
-                ptr => new GenericParameter((osip_uri_param_t*) ptr, false));
+            var header = new ViaHeader
+            {
+                Version = Marshal.PtrToStringAnsi(native->version),
+                Protocol = Marshal.PtrToStringAnsi(native->protocol),
+                Host = Marshal.PtrToStringAnsi(native->host),
+                Port = Marshal.PtrToStringAnsi(native->port),
+                Comment = Marshal.PtrToStringAnsi(native->comment)
+            };
+
+            int size = NativeMethods.osip_list_size(&native->via_params);
+            for (int i = 0; i < size; i++)
+            {
+                osip_uri_param_t* param = (osip_uri_param_t*) NativeMethods.osip_list_get(&native->via_params, i);
+                header.Parameters.Add(GenericParameter.FromNative(param));
+            }
+
+            return header;
         }
 
-        private static osip_via_t* Create()
+        internal osip_via_t* ToNative()
         {
             osip_via_t* native;
             NativeMethods.osip_via_init(&native).ThrowOnError();
+
+            native->version = Marshal.StringToHGlobalAnsi(Version);
+            native->protocol = Marshal.StringToHGlobalAnsi(Protocol);
+            native->host = Marshal.StringToHGlobalAnsi(Host);
+            native->port = Marshal.StringToHGlobalAnsi(Port);
+            native->comment = Marshal.StringToHGlobalAnsi(Comment);
+
+            for(int i = 0; i < Parameters.Count; i++)
+            {
+                osip_uri_param_t* param = Parameters[i].ToNative();
+                NativeMethods.osip_list_add(&native->via_params, param, i).ThrowOnError();
+            }
+
             return native;
         }
 
-        public string Version
-        {
-            get => Marshal.PtrToStringAnsi(_native->version);
-            set
-            {
-                Marshal.FreeHGlobal(_native->version);
-                _native->version = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public string Protocol
-        {
-            get => Marshal.PtrToStringAnsi(_native->protocol);
-            set
-            {
-                Marshal.FreeHGlobal(_native->protocol);
-                _native->protocol = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public string Host
-        {
-            get => Marshal.PtrToStringAnsi(_native->host);
-            set
-            {
-                Marshal.FreeHGlobal(_native->host);
-                _native->host = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public string Port
-        {
-            get => Marshal.PtrToStringAnsi(_native->port);
-            set
-            {
-                Marshal.FreeHGlobal(_native->port);
-                _native->port = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public string Comment
-        {
-            get => Marshal.PtrToStringAnsi(_native->comment);
-            set
-            {
-                Marshal.FreeHGlobal(_native->comment);
-                _native->comment = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public LinkedList<GenericParameter> Parameters { get; }
-
         public static ViaHeader Parse(string str)
         {
-            TryParseCore(str, out ViaHeader header).ThrowOnError(header);
+            TryParseCore(str, out ViaHeader header).ThrowOnError();
             return header;
         }
 
         public static bool TryParse(string str, out ViaHeader header)
         {
-            return TryParseCore(str, out header).EnsureSuccess(ref header);
+            return TryParseCore(str, out header).EnsureSuccess();
         }
 
         private static ErrorCode TryParseCore(string str, out ViaHeader header)
         {
+            osip_via_t* native = null;
             var strPtr = Marshal.StringToHGlobalAnsi(str);
+
             try
             {
-                header = new ViaHeader();
-                return NativeMethods.osip_via_parse(header._native, strPtr);
+                ErrorCode errorCode = NativeMethods.osip_via_init(&native);
+                if (!errorCode.EnsureSuccess())
+                {
+                    header = null;
+                    return errorCode;
+                }
+
+                errorCode = NativeMethods.osip_via_parse(native, strPtr);
+                if (!errorCode.EnsureSuccess())
+                {
+                    header = null;
+                    return errorCode;
+                }
+
+                header = FromNative(native);
+                return errorCode;
             }
             finally
             {
+                NativeMethods.osip_via_free(native);
                 Marshal.FreeHGlobal(strPtr);
             }
         }
 
-        internal osip_via_t* TakeOwnership()
-        {
-            ReleaseOwnership();
-            return _native;
-        }
-        
         public ViaHeader DeepClone()
         {
-            osip_via_t* via;
-            NativeMethods.osip_via_clone(_native, &via).ThrowOnError();
-            return new ViaHeader(via, true);
+            osip_via_t* native = ToNative();
+            
+            try
+            {
+                return FromNative(native);
+            }
+            finally
+            {
+                NativeMethods.osip_via_free(native);
+            }
         }
 
         public override string ToString()
         {
-            IntPtr ptr;
-            NativeMethods.osip_via_to_str(_native, &ptr).ThrowOnError();
+            IntPtr ptr = IntPtr.Zero;
+            osip_via_t* native = ToNative();
 
-            string str = Marshal.PtrToStringAnsi(ptr);
-            Marshal.FreeHGlobal(ptr);
-
-            return str;
-        }
-
-        protected override void OnDispose()
-        {
-            NativeMethods.osip_via_free(_native);
-            _native = osip_via_t.Null;
+            try
+            {
+                NativeMethods.osip_via_to_str(native, &ptr).ThrowOnError();
+                return Marshal.PtrToStringAnsi(ptr);
+            }
+            finally
+            {
+                NativeMethods.osip_via_free(native);
+                Marshal.FreeHGlobal(ptr);
+            }
         }
     }
 }

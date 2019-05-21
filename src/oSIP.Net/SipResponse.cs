@@ -1,40 +1,14 @@
-﻿using System.Runtime.InteropServices;
-
-namespace oSIP.Net
+﻿namespace oSIP.Net
 {
     public unsafe class SipResponse : SipMessage
     {
-        public SipResponse()
-        {
-        }
+        public int StatusCode { get; set; }
 
-        internal SipResponse(osip_message_t* native) : base(native)
-        {
-        }
-
-        public int StatusCode
-        {
-            get => Native->status_code;
-            set => Native->status_code = value;
-        }
-
-        public string ReasonPhrase
-        {
-            get => Marshal.PtrToStringAnsi(Native->reason_phrase);
-            set
-            {
-                Marshal.FreeHGlobal(Native->reason_phrase);
-                Native->reason_phrase = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
+        public string ReasonPhrase { get; set; }
 
         public SipResponse DeepClone()
         {
-            return DeepClone(ptr =>
-            {
-                var native = (osip_message_t*) ptr.ToPointer();
-                return new SipResponse(native);
-            });
+            return DeepClone<SipResponse>();
         }
     }
 }

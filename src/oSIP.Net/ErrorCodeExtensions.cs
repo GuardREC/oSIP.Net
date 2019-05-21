@@ -67,5 +67,10 @@ namespace oSIP.Net
 
             return false;
         }
+
+        internal static bool EnsureSuccess(this ErrorCode code)
+        {
+            return (int) code >= 0;
+        }
     }
 }

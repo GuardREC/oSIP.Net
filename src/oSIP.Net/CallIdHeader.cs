@@ -3,99 +3,105 @@ using System.Runtime.InteropServices;
 
 namespace oSIP.Net
 {
-    public unsafe class CallIdHeader : OwnershipDisposable
+    public unsafe class CallIdHeader
     {
-        private osip_call_id_t* _native;
+        public string Number { get; set; }
 
-        public CallIdHeader() : this(Create(), true)
-        {
-        }
+        public string Host { get; set; }
 
-        internal CallIdHeader(osip_call_id_t* native, bool isOwner) : base(isOwner)
+        internal static CallIdHeader FromNative(osip_call_id_t* native)
         {
-            _native = native;
-        }
-
-        private static osip_call_id_t* Create()
-        {
-            osip_call_id_t* callId;
-            NativeMethods.osip_call_id_init(&callId).ThrowOnError();
-            return callId;
-        }
-
-        public string Number
-        {
-            get => Marshal.PtrToStringAnsi(_native->number);
-            set
+            var header = new CallIdHeader
             {
-                Marshal.FreeHGlobal(_native->number);
-                _native->number = Marshal.StringToHGlobalAnsi(value);
-            }
+                Number = Marshal.PtrToStringAnsi(native->number),
+                Host = Marshal.PtrToStringAnsi(native->host)
+            };
+
+            return header;
         }
 
-        public string Host
+        internal osip_call_id_t* ToNative()
         {
-            get => Marshal.PtrToStringAnsi(_native->host);
-            set
-            {
-                Marshal.FreeHGlobal(_native->host);
-                _native->host = Marshal.StringToHGlobalAnsi(value);
-            }
+            osip_call_id_t* native;
+            NativeMethods.osip_call_id_init(&native).ThrowOnError();
+
+            native->number = Marshal.StringToHGlobalAnsi(Number);
+            native->host = Marshal.StringToHGlobalAnsi(Host);
+
+            return native;
         }
 
         public static CallIdHeader Parse(string str)
         {
-            TryParseCore(str, out CallIdHeader header).ThrowOnError(header);
+            TryParseCore(str, out CallIdHeader header).ThrowOnError();
             return header;
         }
 
         public static bool TryParse(string str, out CallIdHeader header)
         {
-            return TryParseCore(str, out header).EnsureSuccess(ref header);
+            return TryParseCore(str, out header).EnsureSuccess();
         }
 
         private static ErrorCode TryParseCore(string str, out CallIdHeader header)
         {
+            osip_call_id_t* native = null;
             var strPtr = Marshal.StringToHGlobalAnsi(str);
+
             try
             {
-                header = new CallIdHeader();
-                return NativeMethods.osip_call_id_parse(header._native, strPtr);
+                ErrorCode errorCode = NativeMethods.osip_call_id_init(&native);
+                if (!errorCode.EnsureSuccess())
+                {
+                    header = null;
+                    return errorCode;
+                }
+
+                errorCode = NativeMethods.osip_call_id_parse(native, strPtr);
+                if (!errorCode.EnsureSuccess())
+                {
+                    header = null;
+                    return errorCode;
+                }
+
+                header = FromNative(native);
+                return errorCode;
             }
             finally
             {
+                NativeMethods.osip_call_id_free(native);
                 Marshal.FreeHGlobal(strPtr);
             }
         }
 
-        internal osip_call_id_t* TakeOwnership()
-        {
-            ReleaseOwnership();
-            return _native;
-        }
-
         public CallIdHeader DeepClone()
         {
-            osip_call_id_t* callId;
-            NativeMethods.osip_call_id_clone(_native, &callId).ThrowOnError();
-            return new CallIdHeader(callId, true);
+            osip_call_id_t* native = ToNative();
+
+            try
+            {
+                return FromNative(native);
+            }
+            finally
+            {
+                NativeMethods.osip_call_id_free(native);
+            }
         }
 
         public override string ToString()
         {
-            IntPtr ptr;
-            NativeMethods.osip_call_id_to_str(_native, &ptr).ThrowOnError();
+            IntPtr ptr = IntPtr.Zero;
+            osip_call_id_t* native = ToNative();
 
-            string str = Marshal.PtrToStringAnsi(ptr);
-            Marshal.FreeHGlobal(ptr);
-
-            return str;
-        }
-
-        protected override void OnDispose()
-        {
-            NativeMethods.osip_call_id_free(_native);
-            _native = osip_call_id_t.Null;
+            try
+            {
+                NativeMethods.osip_call_id_to_str(native, &ptr).ThrowOnError();
+                return Marshal.PtrToStringAnsi(ptr);
+            }
+            finally
+            {
+                NativeMethods.osip_call_id_free(native);
+                Marshal.FreeHGlobal(ptr);
+            }
         }
     }
 }
