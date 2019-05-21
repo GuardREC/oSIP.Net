@@ -21,10 +21,8 @@ namespace oSIP.Net
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct osip_header_t
+    internal struct osip_header_t
     {
-        public static readonly osip_header_t* Null = (osip_header_t*) IntPtr.Zero;
-
         public IntPtr hname;
         public IntPtr hvalue;
     }

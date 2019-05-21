@@ -24,10 +24,8 @@ namespace oSIP.Net
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct osip_via_t
+    internal struct osip_via_t
     {
-        public static readonly osip_via_t* Null = (osip_via_t*) IntPtr.Zero;
-
         public IntPtr version;
         public IntPtr protocol;
         public IntPtr host;
