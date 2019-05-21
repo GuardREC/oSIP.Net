@@ -31,12 +31,6 @@ namespace oSIP.Net
             };
         }
 
-        internal static void ThrowOnError<T>(this ErrorCode code, T valueToDisposeOnFailure)
-            where T : IDisposable
-        {
-            ThrowOnError(code, valueToDisposeOnFailure.Dispose);
-        }
-
         internal static void ThrowOnError(this ErrorCode code, Action disposer = null)
         {
             if ((int) code >= 0)
@@ -54,18 +48,9 @@ namespace oSIP.Net
             throw new SipException(errorMessage);
         }
 
-        internal static bool EnsureSuccess<T>(this ErrorCode code, ref T valueToClearOnFailure)
-            where T : class, IDisposable
+        internal static bool EnsureSuccess(this ErrorCode code)
         {
-            if ((int) code >= 0)
-            {
-                return true;
-            }
-
-            valueToClearOnFailure.Dispose();
-            valueToClearOnFailure = null;
-
-            return false;
+            return (int) code >= 0;
         }
     }
 }

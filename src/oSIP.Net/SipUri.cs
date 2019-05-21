@@ -1,145 +1,157 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace oSIP.Net
 {
-    public unsafe class SipUri : OwnershipDisposable
+    public unsafe class SipUri
     {
-        private osip_uri_t* _native;
-
-        public SipUri() : this(Create(), true)
+        public SipUri()
         {
+            Scheme = "sip";
+            Parameters = new List<SipUriParameter>();
+            Headers = new List<SipUriParameter>();
         }
 
-        internal SipUri(osip_uri_t* native, bool isOwner) : base(isOwner)
-        {
-            _native = native;
-            Parameters = CreateParameterList(&_native->url_params);
-            Headers = CreateParameterList(&_native->url_headers);
-        }
+        public string Scheme { get; set; }
 
-        private static osip_uri_t* Create()
+        public string Host { get; set; }
+
+        public string Port { get; set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
+
+        public List<SipUriParameter> Parameters { get; }
+
+        public List<SipUriParameter> Headers { get; }
+
+        internal static SipUri FromNative(osip_uri_t* native)
         {
-            osip_uri_t* uri;
-            NativeMethods.osip_uri_init(&uri).ThrowOnError();
+            var uri = new SipUri
+            {
+                Scheme = Marshal.PtrToStringAnsi(native->scheme),
+                Host = Marshal.PtrToStringAnsi(native->host),
+                Port = Marshal.PtrToStringAnsi(native->port),
+                Username = Marshal.PtrToStringAnsi(native->username),
+                Password = Marshal.PtrToStringAnsi(native->password)
+            };
+
+            int size = NativeMethods.osip_list_size(&native->url_params);
+            for (int i = 0; i < size; i++)
+            {
+                osip_uri_param_t* param = (osip_uri_param_t*) NativeMethods.osip_list_get(&native->url_params, i);
+                uri.Parameters.Add(SipUriParameter.FromNative(param));
+            }
+
+            size = NativeMethods.osip_list_size(&native->url_headers);
+            for (int i = 0; i < size; i++)
+            {
+                osip_uri_param_t* header = (osip_uri_param_t*) NativeMethods.osip_list_get(&native->url_headers, i);
+                uri.Headers.Add(SipUriParameter.FromNative(header));
+            }
+
             return uri;
         }
 
-        private static LinkedList<SipUriParameter> CreateParameterList(osip_list_t* list)
+        internal osip_uri_t* ToNative()
         {
-            return new LinkedList<SipUriParameter>(
-                list,
-                parameter => new IntPtr(parameter.TakeOwnership()),
-                ptr => new SipUriParameter((osip_uri_param_t*) ptr, false));
-        }
+            osip_uri_t* native;
+            NativeMethods.osip_uri_init(&native).ThrowOnError();
 
-        public string Scheme
-        {
-            get => Marshal.PtrToStringAnsi(_native->scheme);
-            set
+            native->scheme = Marshal.StringToHGlobalAnsi(Scheme);
+            native->host = Marshal.StringToHGlobalAnsi(Host);
+            native->port = Marshal.StringToHGlobalAnsi(Port);
+            native->username = Marshal.StringToHGlobalAnsi(Username);
+            native->password = Marshal.StringToHGlobalAnsi(Password);
+
+            for (int i = 0; i < Parameters.Count; i++)
             {
-                Marshal.FreeHGlobal(_native->scheme);
-                _native->scheme = Marshal.StringToHGlobalAnsi(value);
+                osip_uri_param_t* param = Parameters[i].ToNative();
+                NativeMethods.osip_list_add(&native->url_params, param, i).ThrowOnError();
             }
-        }
 
-        public string Host
-        {
-            get => Marshal.PtrToStringAnsi(_native->host);
-            set
+            for (int i = 0; i < Headers.Count; i++)
             {
-                Marshal.FreeHGlobal(_native->host);
-                _native->host = Marshal.StringToHGlobalAnsi(value);
+                osip_uri_param_t* param = Headers[i].ToNative();
+                NativeMethods.osip_list_add(&native->url_headers, param, i).ThrowOnError();
             }
+
+            return native;
         }
-
-        public string Port
-        {
-            get => Marshal.PtrToStringAnsi(_native->port);
-            set
-            {
-                Marshal.FreeHGlobal(_native->port);
-                _native->port = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public string Username
-        {
-            get => Marshal.PtrToStringAnsi(_native->username);
-            set
-            {
-                Marshal.FreeHGlobal(_native->username);
-                _native->username = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public string Password
-        {
-            get => Marshal.PtrToStringAnsi(_native->password);
-            set
-            {
-                Marshal.FreeHGlobal(_native->password);
-                _native->password = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public LinkedList<SipUriParameter> Parameters { get; }
-
-        public LinkedList<SipUriParameter> Headers { get; }
 
         public static SipUri Parse(string str)
         {
-            TryParseCore(str, out SipUri uri).ThrowOnError(uri);
+            TryParseCore(str, out SipUri uri).ThrowOnError();
             return uri;
         }
 
         public static bool TryParse(string str, out SipUri uri)
         {
-            return TryParseCore(str, out uri).EnsureSuccess(ref uri);
+            return TryParseCore(str, out uri).EnsureSuccess();
         }
 
         private static ErrorCode TryParseCore(string str, out SipUri uri)
         {
             var strPtr = Marshal.StringToHGlobalAnsi(str);
+            osip_uri_t* native = null;
+
             try
             {
-                uri = new SipUri();
-                return NativeMethods.osip_uri_parse(uri._native, strPtr);
+                ErrorCode errorCode = NativeMethods.osip_uri_init(&native);
+                if (!errorCode.EnsureSuccess())
+                {
+                    uri = default;
+                    return errorCode;
+                }
+
+                errorCode = NativeMethods.osip_uri_parse(native, strPtr);
+                if (!errorCode.EnsureSuccess())
+                {
+                    uri = default;
+                    return errorCode;
+                }
+
+                uri = FromNative(native);
+                return errorCode;
             }
             finally
             {
+                NativeMethods.osip_uri_free(native);
                 Marshal.FreeHGlobal(strPtr);
             }
         }
 
-        internal osip_uri_t* TakeOwnership()
-        {
-            ReleaseOwnership();
-            return _native;
-        }
-
         public SipUri DeepClone()
         {
-            osip_uri_t* uri;
-            NativeMethods.osip_uri_clone(_native, &uri).ThrowOnError();
-            return new SipUri(uri, true);
+            osip_uri_t* native = ToNative();
+
+            try
+            {
+                return FromNative(native);
+            }
+            finally
+            {
+                NativeMethods.osip_uri_free(native);
+            }
         }
 
         public override string ToString()
         {
-            IntPtr ptr;
-            NativeMethods.osip_uri_to_str(_native, &ptr).ThrowOnError();
+            osip_uri_t* native = ToNative();
+            IntPtr ptr = IntPtr.Zero;
 
-            string str = Marshal.PtrToStringAnsi(ptr);
-            Marshal.FreeHGlobal(ptr);
-
-            return str;
-        }
-
-        protected override void OnDispose()
-        {
-            NativeMethods.osip_uri_free(_native);
-            _native = osip_uri_t.Null;
+            try
+            {
+                NativeMethods.osip_uri_to_str(native, &ptr).ThrowOnError();
+                return Marshal.PtrToStringAnsi(ptr);
+            }
+            finally
+            {
+                NativeMethods.osip_uri_free(native);
+                Marshal.FreeHGlobal(ptr);
+            }
         }
     }
 }

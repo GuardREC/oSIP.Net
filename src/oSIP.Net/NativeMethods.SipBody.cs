@@ -29,8 +29,6 @@ namespace oSIP.Net
     [StructLayout(LayoutKind.Sequential)]
     internal unsafe struct osip_body_t
     {
-        public static readonly osip_body_t* Null = (osip_body_t*) IntPtr.Zero;
-
         public IntPtr body;
         public ulong length;
         public readonly osip_list_t* headers;

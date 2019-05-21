@@ -2,51 +2,34 @@
 
 namespace oSIP.Net
 {
-    public unsafe class GenericParameter : OwnershipDisposable
+    public unsafe class GenericParameter
     {
-        private osip_uri_param_t* _native;
-
-        public GenericParameter(string name, string value) : this(Create(), true)
+        public GenericParameter(string name, string value)
         {
             Name = name;
             Value = value;
         }
 
-        internal GenericParameter(osip_uri_param_t* native, bool isOwner) : base(isOwner)
+        internal static GenericParameter FromNative(osip_uri_param_t* native)
         {
-            _native = native;
+            return new GenericParameter(
+                Marshal.PtrToStringAnsi(native->gname),
+                Marshal.PtrToStringAnsi(native->gvalue));
         }
 
-        private static osip_uri_param_t* Create()
+        internal osip_uri_param_t* ToNative()
         {
-            osip_uri_param_t* param;
-            NativeMethods.osip_uri_param_init(&param).ThrowOnError();
-            return param;
+            osip_uri_param_t* native;
+            NativeMethods.osip_uri_param_init(&native).ThrowOnError();
+
+            native->gname = Marshal.StringToHGlobalAnsi(Name);
+            native->gvalue = Marshal.StringToHGlobalAnsi(Value);
+
+            return native;
         }
 
-        public string Name
-        {
-            get => Marshal.PtrToStringAnsi(_native->gname);
-            set => _native->gname = Marshal.StringToHGlobalAnsi(value?.Trim());
-        }
+        public string Name { get; }
 
-        public string Value
-        {
-            get => Marshal.PtrToStringAnsi(_native->gvalue);
-            set => _native->gvalue = Marshal.StringToHGlobalAnsi(value?.Trim());
-        }
-
-        internal osip_uri_param_t* TakeOwnership()
-        {
-            ReleaseOwnership();
-            return _native;
-        }
-
-        protected override void OnDispose()
-        {
-            NativeMethods.osip_uri_param_free(_native);
-            _native = osip_uri_param_t.Null;
-        }
-
+        public string Value { get; }
     }
 }

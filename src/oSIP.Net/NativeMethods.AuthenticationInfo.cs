@@ -24,10 +24,8 @@ namespace oSIP.Net
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct osip_authentication_info_t
+    internal struct osip_authentication_info_t
     {
-        public static readonly osip_authentication_info_t* Null = (osip_authentication_info_t*) IntPtr.Zero;
-
         public IntPtr auth_type;
         public IntPtr nextnonce;
         public IntPtr qop_options;

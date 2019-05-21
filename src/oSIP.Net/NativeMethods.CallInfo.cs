@@ -24,10 +24,8 @@ namespace oSIP.Net
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct osip_call_info_t
+    internal struct osip_call_info_t
     {
-        public static readonly osip_call_info_t* Null = (osip_call_info_t*) IntPtr.Zero;
-
         public IntPtr element;
         public osip_list_t gen_params;
     }

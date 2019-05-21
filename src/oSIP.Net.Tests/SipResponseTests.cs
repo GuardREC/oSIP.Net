@@ -10,56 +10,54 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_response()
         {
-            using (var response = new SipResponse())
+            var response = new SipResponse
             {
-                response.Version = "SIP/2.0";
-                response.StatusCode = 200;
-                response.ReasonPhrase = "OK";
+                Version = "SIP/2.0",
+                StatusCode = 200,
+                ReasonPhrase = "OK"
+            };
 
-                Assert.That(response.ToString(), Is.EqualTo(
-                    "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
-                    "\r\n"));
-            }
+            Assert.That(response.ToString(), Is.EqualTo(
+                "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
+                "\r\n"));
         }
 
         [Test]
         public void Shall_byteify_response()
         {
-            using (var response = new SipResponse())
+            var response = new SipResponse
             {
-                response.Version = "SIP/2.0";
-                response.StatusCode = 200;
-                response.ReasonPhrase = "OK";
+                Version = "SIP/2.0",
+                StatusCode = 200,
+                ReasonPhrase = "OK"
+            };
 
-                var buffer = new byte[ushort.MaxValue];
-                response.TryCopyTo(buffer, 0, out int length);
+            var buffer = new byte[ushort.MaxValue];
+            response.TryCopyTo(buffer, 0, out int length);
 
-                using (var response2 = (SipResponse) SipMessage.Parse(new ArraySegment<byte>(buffer, 0, length)))
-                {
-                    Assert.That(response2.ToString(), Is.EqualTo(
-                        "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
-                        "\r\n"));
-                }
-            }
+            var response2 = (SipResponse) SipMessage.Parse(new ArraySegment<byte>(buffer, 0, length));
+            Assert.That(response2.ToString(), Is.EqualTo(
+                "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
+                "\r\n"));
         }
 
         [Test]
         public void Shall_not_return_cached_stringified_response()
         {
-            using (var response = new SipResponse())
+            var response = new SipResponse
             {
-                response.Version = "SIP/2.0";
-                response.StatusCode = 200;
-                response.ReasonPhrase = "OK";
+                Version = "SIP/2.0",
+                StatusCode = 200,
+                ReasonPhrase = "OK"
+            };
 
-                string before = response.ToString();
+            string before = response.ToString();
 
-                response.StatusCode = 201;
+            response.StatusCode = 201;
 
-                string after = response.ToString();
+            string after = response.ToString();
 
-                Assert.That(before, Is.Not.EqualTo(after));
-            }
+            Assert.That(before, Is.Not.EqualTo(after));
         }
 
         [Test]
@@ -68,12 +66,10 @@ namespace oSIP.Net.Tests
             const string str =
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n";
-            using (var response = (SipResponse) SipMessage.Parse(str))
-            {
-                Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
-                Assert.That(response.StatusCode, Is.EqualTo(200));
-                Assert.That(response.ReasonPhrase, Is.EqualTo("OK"));
-            }
+            var response = (SipResponse) SipMessage.Parse(str);
+            Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
+            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(response.ReasonPhrase, Is.EqualTo("OK"));
         }
 
         [Test]
@@ -82,12 +78,10 @@ namespace oSIP.Net.Tests
             const string str =
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n";
-            using (var response = (SipResponse)SipMessage.Parse(Encoding.UTF8.GetBytes(str)))
-            {
-                Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
-                Assert.That(response.StatusCode, Is.EqualTo(200));
-                Assert.That(response.ReasonPhrase, Is.EqualTo("OK"));
-            }
+            var response = (SipResponse) SipMessage.Parse(Encoding.UTF8.GetBytes(str));
+            Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
+            Assert.That(response.StatusCode, Is.EqualTo(200));
+            Assert.That(response.ReasonPhrase, Is.EqualTo("OK"));
         }
 
         [Test]
@@ -96,15 +90,13 @@ namespace oSIP.Net.Tests
             const string str =
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n";
-            using (var original = (SipResponse) SipMessage.Parse(str))
-            using (var cloned = original.DeepClone())
-            {
-                original.StatusCode = 183;
-                original.ReasonPhrase = "Session Progress";
+            var original = (SipResponse) SipMessage.Parse(str);
+            var cloned = original.DeepClone();
+            original.StatusCode = 183;
+            original.ReasonPhrase = "Session Progress";
 
-                Assert.That(cloned.ToString(), Does.Contain("200 OK"));
-                Assert.That(original.ToString(), Does.Contain("183 Session Progress"));
-            }
+            Assert.That(cloned.ToString(), Does.Contain("200 OK"));
+            Assert.That(original.ToString(), Does.Contain("183 Session Progress"));
         }
     }
 }

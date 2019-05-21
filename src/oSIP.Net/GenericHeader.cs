@@ -3,76 +3,73 @@ using System.Runtime.InteropServices;
 
 namespace oSIP.Net
 {
-    public unsafe class GenericHeader : OwnershipDisposable
+    public unsafe class GenericHeader
     {
-        private osip_header_t* _native;
+        public GenericHeader()
+        {
+        }
 
-        public GenericHeader(string name, string value) : this(Create(), true)
+        public GenericHeader(string name, string value)
         {
             Name = name;
             Value = value;
         }
 
-        internal GenericHeader(osip_header_t* native, bool isOwner) : base(isOwner)
+        public string Name { get; set; }
+
+        public string Value { get; set; }
+
+        internal static GenericHeader FromNative(osip_header_t* native)
         {
-            _native = native;
+            var header = new GenericHeader
+            {
+                Name = Marshal.PtrToStringAnsi(native->hname),
+                Value = Marshal.PtrToStringAnsi(native->hvalue)
+            };
+
+            return header;
         }
 
-        private static osip_header_t* Create()
+        internal osip_header_t* ToNative()
         {
             osip_header_t* native;
             NativeMethods.osip_header_init(&native).ThrowOnError();
+
+            native->hname = Marshal.StringToHGlobalAnsi(Name);
+            native->hvalue = Marshal.StringToHGlobalAnsi(Value);
+
             return native;
-        }
-
-        public string Name
-        {
-            get => Marshal.PtrToStringAnsi(_native->hname);
-            set
-            {
-                Marshal.FreeHGlobal(_native->hname);
-                _native->hname = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        public string Value
-        {
-            get => Marshal.PtrToStringAnsi(_native->hvalue);
-            set
-            {
-                Marshal.FreeHGlobal(_native->hvalue);
-                _native->hvalue = Marshal.StringToHGlobalAnsi(value);
-            }
-        }
-
-        internal osip_header_t* TakeOwnership()
-        {
-            ReleaseOwnership();
-            return _native;
         }
 
         public GenericHeader DeepClone()
         {
-            osip_header_t* native;
-            NativeMethods.osip_header_clone(_native, &native).ThrowOnError();
-            return new GenericHeader(native, true);
+            osip_header_t* native = ToNative();
+
+            try
+            {
+                return FromNative(native);
+            }
+            finally
+            {
+                NativeMethods.osip_header_free(native);
+            }
         }
 
         public override string ToString()
         {
-            IntPtr ptr;
-            NativeMethods.osip_header_to_str(_native, &ptr).ThrowOnError();
+            IntPtr ptr = IntPtr.Zero;
+            osip_header_t* native = ToNative();
 
-            string str = Marshal.PtrToStringAnsi(ptr);
-            Marshal.FreeHGlobal(ptr);
-
-            return str;
-        }
-
-        protected override void OnDispose()
-        {
-            NativeMethods.osip_header_free(_native);
-            _native = osip_header_t.Null;
+            try
+            {
+                NativeMethods.osip_header_to_str(native, &ptr).ThrowOnError();
+                return Marshal.PtrToStringAnsi(ptr);
+            }
+            finally
+            {
+                NativeMethods.osip_header_free(native);
+                Marshal.FreeHGlobal(ptr);
+            }
         }
     }
 }

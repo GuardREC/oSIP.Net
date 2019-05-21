@@ -53,10 +53,8 @@ namespace oSIP.Net
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal unsafe struct osip_uri_param_t
+    internal struct osip_uri_param_t
     {
-        public static readonly osip_uri_param_t* Null = (osip_uri_param_t*) IntPtr.Zero;
-
         public IntPtr gname;
         public IntPtr gvalue;
     }

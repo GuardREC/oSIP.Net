@@ -8,21 +8,19 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_stringify_header()
         {
-            using (var header = new ContentLengthHeader())
+            var header = new ContentLengthHeader
             {
-                header.Value = "42";
+                Value = "42"
+            };
 
-                Assert.That(header.ToString(), Is.EqualTo("42"));
-            }
+            Assert.That(header.ToString(), Is.EqualTo("42"));
         }
 
         [Test]
         public void Shall_parse_header()
         {
-            using (ContentLengthHeader header = ContentLengthHeader.Parse("42"))
-            {
-                Assert.That(header.Value, Is.EqualTo("42"));
-            }
+            Assert.That(ContentLengthHeader.TryParse("42", out ContentLengthHeader header), Is.True);
+            Assert.That(header.Value, Is.EqualTo("42"));
         }
     }
 }

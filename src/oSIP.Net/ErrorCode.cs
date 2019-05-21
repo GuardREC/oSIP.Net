@@ -2,6 +2,7 @@
 {
     internal enum ErrorCode
     {
+        Success = 0,
         UndefinedError = -1,
         BadParameter = -2,
         WrongState = -3,
