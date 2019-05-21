@@ -55,7 +55,7 @@ namespace oSIP.Net
             native->port = Marshal.StringToHGlobalAnsi(Port);
             native->comment = Marshal.StringToHGlobalAnsi(Comment);
 
-            for(int i = 0; i < Parameters.Count; i++)
+            for (int i = 0; i < Parameters.Count; i++)
             {
                 osip_uri_param_t* param = Parameters[i].ToNative();
                 NativeMethods.osip_list_add(&native->via_params, param, i).ThrowOnError();
@@ -109,7 +109,7 @@ namespace oSIP.Net
         public ViaHeader DeepClone()
         {
             osip_via_t* native = ToNative();
-            
+
             try
             {
                 return FromNative(native);

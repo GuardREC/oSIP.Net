@@ -32,7 +32,7 @@ namespace oSIP.Net
 
         public static void SetLevel(TraceLevel level)
         {
-            foreach (TraceLevel l in Enum.GetValues(typeof (TraceLevel)))
+            foreach (TraceLevel l in Enum.GetValues(typeof(TraceLevel)))
             {
                 if (l <= level)
                 {
@@ -65,7 +65,7 @@ namespace oSIP.Net
             {
                 count = NativeMethods.vsprintf_linux(buffer, formatPtr, argPtr);
             }
-            else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 count = NativeMethods.vsprintf_mac(buffer, formatPtr, argPtr);
             }

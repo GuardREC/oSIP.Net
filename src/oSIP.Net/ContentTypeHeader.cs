@@ -28,7 +28,7 @@ namespace oSIP.Net
             int size = NativeMethods.osip_list_size(&native->gen_params);
             for (int i = 0; i < size; i++)
             {
-                osip_uri_param_t* param = (osip_uri_param_t*)NativeMethods.osip_list_get(&native->gen_params, i);
+                osip_uri_param_t* param = (osip_uri_param_t*) NativeMethods.osip_list_get(&native->gen_params, i);
                 header.Parameters.Add(GenericParameter.FromNative(param));
             }
 

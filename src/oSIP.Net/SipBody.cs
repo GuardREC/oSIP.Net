@@ -21,7 +21,7 @@ namespace oSIP.Net
         {
             var body = new SipBody
             {
-                Data = Marshal.PtrToStringAnsi(native->body, (int)native->length),
+                Data = Marshal.PtrToStringAnsi(native->body, (int) native->length),
                 ContentType = native->content_type != osip_content_type_t.Null
                     ? ContentTypeHeader.FromNative(native->content_type)
                     : null
@@ -30,7 +30,7 @@ namespace oSIP.Net
             int size = NativeMethods.osip_list_size(native->headers);
             for (int i = 0; i < size; i++)
             {
-                osip_header_t* header = (osip_header_t*)NativeMethods.osip_list_get(native->headers, i);
+                osip_header_t* header = (osip_header_t*) NativeMethods.osip_list_get(native->headers, i);
                 body.Headers.Add(GenericHeader.FromNative(header));
             }
 
@@ -43,10 +43,10 @@ namespace oSIP.Net
             NativeMethods.osip_body_init(&native).ThrowOnError();
 
             native->body = Marshal.StringToHGlobalAnsi(Data);
-            native->length = (ulong)Data.Length;
+            native->length = (ulong) Data.Length;
             native->content_type = ContentType != null
-                   ? ContentType.ToNative()
-                   : osip_content_type_t.Null;
+                ? ContentType.ToNative()
+                : osip_content_type_t.Null;
 
             for (int i = 0; i < Headers.Count; i++)
             {
@@ -82,7 +82,7 @@ namespace oSIP.Net
                     return errorCode;
                 }
 
-                errorCode = NativeMethods.osip_body_parse(native, strPtr, (ulong)str.Length);
+                errorCode = NativeMethods.osip_body_parse(native, strPtr, (ulong) str.Length);
                 if (!errorCode.EnsureSuccess())
                 {
                     body = null;
@@ -124,7 +124,7 @@ namespace oSIP.Net
                     return errorCode;
                 }
 
-                errorCode = NativeMethods.osip_body_parse_mime(native, strPtr, (ulong)str.Length);
+                errorCode = NativeMethods.osip_body_parse_mime(native, strPtr, (ulong) str.Length);
                 if (!errorCode.EnsureSuccess())
                 {
                     body = null;
@@ -164,7 +164,7 @@ namespace oSIP.Net
             {
                 ulong length;
                 NativeMethods.osip_body_to_str(native, &ptr, &length).ThrowOnError();
-                return Marshal.PtrToStringAnsi(ptr, (int)length);
+                return Marshal.PtrToStringAnsi(ptr, (int) length);
             }
             finally
             {

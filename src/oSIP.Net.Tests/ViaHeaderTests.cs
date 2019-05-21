@@ -27,7 +27,9 @@ namespace oSIP.Net.Tests
         [Test]
         public void Shall_parse_header()
         {
-            Assert.That(ViaHeader.TryParse("SIP/2.0/UDP foo.bar.com:1234;foo=bar (a comment)", out ViaHeader header), Is.True);
+            const string str = "SIP/2.0/UDP foo.bar.com:1234;foo=bar (a comment)";
+
+            Assert.That(ViaHeader.TryParse(str, out ViaHeader header), Is.True);
             Assert.That(header.Version, Is.EqualTo("2.0"));
             Assert.That(header.Protocol, Is.EqualTo("UDP"));
             Assert.That(header.Host, Is.EqualTo("foo.bar.com"));

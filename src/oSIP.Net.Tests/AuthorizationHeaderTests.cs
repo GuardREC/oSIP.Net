@@ -36,7 +36,7 @@ namespace oSIP.Net.Tests
                     "algorithm=\"g\", cnonce=\"h\", opaque=\"i\", qop=\"j\", nc=00000001, version=\"k\", " +
                     "targetname=\"l\", gssapi-data=\"m\", crand=\"n\", cnum=\"o\""));
         }
-        
+
         [Test]
         public void Shall_parse_header()
         {

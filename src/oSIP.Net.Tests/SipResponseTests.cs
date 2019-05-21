@@ -35,7 +35,7 @@ namespace oSIP.Net.Tests
             var buffer = new byte[ushort.MaxValue];
             response.TryCopyTo(buffer, 0, out int length);
 
-            var response2 = (SipResponse)SipMessage.Parse(new ArraySegment<byte>(buffer, 0, length));
+            var response2 = (SipResponse) SipMessage.Parse(new ArraySegment<byte>(buffer, 0, length));
             Assert.That(response2.ToString(), Is.EqualTo(
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n"));
@@ -66,7 +66,7 @@ namespace oSIP.Net.Tests
             const string str =
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n";
-            var response = (SipResponse)SipMessage.Parse(str);
+            var response = (SipResponse) SipMessage.Parse(str);
             Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
             Assert.That(response.StatusCode, Is.EqualTo(200));
             Assert.That(response.ReasonPhrase, Is.EqualTo("OK"));
@@ -78,7 +78,7 @@ namespace oSIP.Net.Tests
             const string str =
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n";
-            var response = (SipResponse)SipMessage.Parse(Encoding.UTF8.GetBytes(str));
+            var response = (SipResponse) SipMessage.Parse(Encoding.UTF8.GetBytes(str));
             Assert.That(response.Version, Is.EqualTo("SIP/2.0"));
             Assert.That(response.StatusCode, Is.EqualTo(200));
             Assert.That(response.ReasonPhrase, Is.EqualTo("OK"));
@@ -90,7 +90,7 @@ namespace oSIP.Net.Tests
             const string str =
                 "SIP/2.0 200 OK\r\nContent-Length: 0\r\n" +
                 "\r\n";
-            var original = (SipResponse)SipMessage.Parse(str);
+            var original = (SipResponse) SipMessage.Parse(str);
             var cloned = original.DeepClone();
             original.StatusCode = 183;
             original.ReasonPhrase = "Session Progress";
